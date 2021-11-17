@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="JavaScript 中数据类型基本分为基本类型与引用类型，基本类型包括 String、Number、Boolean、undefined、Null以及 ES6 中新提出的 Symbol，引用类型多为一些对象，比如 Object、Function 等，在 ES6 中又添加了一个新的引用对象 class，虽然使用方式与其它的语言十分的相似，但其内部还是通过 Function 实现，只是另外借助了原型对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JavaScript原型链">
+<meta property="og:url" content="https://bipch.cn/prototype-chain/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="JavaScript 中数据类型基本分为基本类型与引用类型，基本类型包括 String、Number、Boolean、undefined、Null以及 ES6 中新提出的 Symbol，引用类型多为一些对象，比如 Object、Function 等，在 ES6 中又添加了一个新的引用对象 class，虽然使用方式与其它的语言十分的相似，但其内部还是通过 Function 实现，只是另外借助了原型对">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-11T08:19:23.000Z">
+<meta property="article:modified_time" content="2021-11-09T14:34:50.971Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="原型链">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/prototype-chain/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JavaScript原型链 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/prototype-chain/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JavaScript原型链
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-11 16:19:23" itemprop="dateCreated datePublished" datetime="2021-03-11T16:19:23+08:00">2021-03-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-09 22:34:50" itemprop="dateModified" datetime="2021-11-09T22:34:50+08:00">2021-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>JavaScript 中数据类型基本分为基本类型与引用类型，基本类型包括 String、Number、Boolean、undefined、Null以及 ES6 中新提出的 Symbol，引用类型多为一些对象，比如 Object、Function 等，在 ES6 中又添加了一个新的引用对象 <strong>class</strong>，虽然使用方式与其它的语言十分的相似，但其内部还是通过 <code>Function</code> 实现，只是另外借助了<code>原型对象</code>、<code>原型链</code>两个概念。</p>
+<span id="more"></span>
+
+<h2 id="普通对象与函数对象"><a href="#普通对象与函数对象" class="headerlink" title="普通对象与函数对象"></a>普通对象与函数对象</h2><p>在 JavaScript 中的数对象都可以分为 <strong>普通对象</strong> 和 <strong>函数对象</strong>，通过 Function 实例的对象均为函数对象，反之则为普通对象，但是 Object 和 Function 为函数对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> o1 = &#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> o2 =<span class="keyword">new</span> <span class="built_in">Object</span>();</span><br><span class="line"><span class="keyword">var</span> o3 = <span class="keyword">new</span> f1();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f1</span>(<span class="params"></span>)</span>&#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> f2 = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;;</span><br><span class="line"><span class="keyword">var</span> f3 = <span class="keyword">new</span> <span class="built_in">Function</span>(<span class="string">&#x27;str&#x27;</span>,<span class="string">&#x27;console.log(str)&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="built_in">Object</span>); <span class="comment">//function</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> <span class="built_in">Function</span>); <span class="comment">//function</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> f1); <span class="comment">//function</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> f2); <span class="comment">//function</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> f3); <span class="comment">//function</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> o1); <span class="comment">//object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> o2); <span class="comment">//object</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="keyword">typeof</span> o3); <span class="comment">//object</span></span><br></pre></td></tr></table></figure>
+<h2 id="构造函数"><a href="#构造函数" class="headerlink" title="构造函数"></a>构造函数</h2><p>每一个对象都内置一个 <code>constructor</code> 属性，该属性指向创建其的函数对象。例如我们有下面的代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Person</span>(<span class="params">name, age</span>) </span>&#123;</span><br><span class="line">  <span class="built_in">this</span>.name = name;</span><br><span class="line">  <span class="built_in">this</span>.age = age;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">this</span>.sayName = <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    alert(<span class="built_in">this</span>.name)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> person1 = <span class="keyword">new</span> Person(<span class="string">&#x27;world&#x27;</span>, <span class="number">28</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="built_in">console</span>.log(person1.constructor === Person);</span><br></pre></td></tr></table></figure>
+<p>所以我们便可以得出：<code>constructor 属性返回创建此对象的函数的引用</code>。</p>
+<h2 id="原型对象"><a href="#原型对象" class="headerlink" title="原型对象"></a>原型对象</h2><p>JavaScript 中每一个 <strong>函数对象</strong> 都包含着一些预定义的属性，例如都内置一个 <code>prototype</code> 属性，其会返回一个对象，而这个对象便称之为 <code>原型对象</code>。<br>其实就是一个普通的 JS 对象，主要目的是保存着实例共享的方法，内置了两个属性：</p>
+<ol>
+<li><code>constructor</code>：始终指向创建当前对象的构造函数。</li>
+<li><code>___proto___</code>：该属性指向构造函数的原型对象，所以这里指向 <code>Object.prototype</code>。</li>
+</ol>
+<p>比如下面代码执行结果为：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Person.prototype.constructor</span> === Person  // <span class="literal">true</span></span><br><span class="line"><span class="attr">Person.prototype.constructor</span> === person1.constructor  // <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h2 id="proto"><a href="#proto" class="headerlink" title="proto"></a><strong><em>proto</em></strong></h2><p>JavaScript 中任何的对象数据都会内置一个 <code>___proto___</code> 属性，其指向 <strong>构造函数的原型对象</strong>。<br>可能听着有些绕，但是明白了上面两个概念，其实很容易理解，例如上面代码中：<br><strong>person1</strong> 有个内置 <strong>proto</strong> 属性，而它的构造器返回 <strong>Person</strong> 对象，那么构造函数的原型对象是 <strong>Person.prototype</strong>，那么就可以写出：<code>person1.__proto__ === Person.prototype</code>。</p>
+<p>其实到这一步以及可以发现以及应约见构建出一条链子出来了，而这条链，便是 <code>原型链</code>。</p>
+<h2 id="原型链"><a href="#原型链" class="headerlink" title="原型链"></a>原型链</h2><p>上面以及介绍完原型链的定义了重要的定义，那么可以看下这些问题进行检测：</p>
+<ol>
+<li><strong>person1.<strong>proto</strong></strong> 等于什么？ <code>person1.__proto__ === Person.prototype</code>。</li>
+<li><strong>Person.<strong>proto</strong></strong> 等于什么？ <code>Person.__proto__ === Function.prototype</code>。</li>
+<li><strong>Person.prototype.<strong>proto</strong></strong> 等于什么？ <code>Person.prototype.__proto__ === Object.prototype</code>。</li>
+<li><strong>Object.<strong>proto</strong></strong> 等于什么？ <code>Object.__proto__ === Function.prototype</code>。</li>
+<li><strong>Object.prototype.<strong>proto</strong></strong> 等于什么？ <code>Object.prototype.__proto__ === null</code>。</li>
+</ol>
+<p>其实原型链就是一直深扒 <code>__proto__</code> 属性，一直到找到我们想要的或为 null。<br>例如我们需要 <code>person1</code> 中的 <code>toString</code> 方法，其回先找 <code>person1.__proto__</code> 也就是上面的 <code>Person.prototype</code> 发现其只有一个 <strong>sayName</strong> 没有我们找到，回继续探索 <code>Person.prototype.__proto__</code> 也就到了 <code>Object.prototype</code> 找到结束并返回，否则知道其为 null 为止。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实总结起来很简单：</p>
+<ol>
+<li>任何对象都拥有一个 <code>__proto__</code> 属性，该属性返回其构造函数的原型对象。</li>
+<li>只有函数对象 <code>prototype</code> 属性，目的就是为了属性共享，其返回了一个该属性的原型对象。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8E%9F%E5%9E%8B%E9%93%BE/" rel="tag"># 原型链</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/es6-es12/" rel="prev" title="Es6-Es12新特性">
+      <i class="fa fa-chevron-left"></i> Es6-Es12新特性
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/session-cookie/" rel="next" title="Session和Cookie">
+      Session和Cookie <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9A%E5%AF%B9%E8%B1%A1%E4%B8%8E%E5%87%BD%E6%95%B0%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.</span> <span class="nav-text">普通对象与函数对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">构造函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.</span> <span class="nav-text">原型对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proto"><span class="nav-number">4.</span> <span class="nav-text">proto</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE"><span class="nav-number">5.</span> <span class="nav-text">原型链</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

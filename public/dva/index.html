@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一款整合 redux 和 redux-saga 开发的一款脚手架，其内置了一些 React 项目常用的一些插件和配置，我们只需按照其给出的配置和架构，可以很简单的搭建出我们的项目，我们可以理解为一个轻量级的应用框架。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dva">
+<meta property="og:url" content="https://bipch.cn/dva/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="一款整合 redux 和 redux-saga 开发的一款脚手架，其内置了一些 React 项目常用的一些插件和配置，我们只需按照其给出的配置和架构，可以很简单的搭建出我们的项目，我们可以理解为一个轻量级的应用框架。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-27T00:11:39.000Z">
+<meta property="article:modified_time" content="2021-08-20T15:44:53.144Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="脚手架">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/dva/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Dva | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/dva/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dva
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-27 08:11:39" itemprop="dateCreated datePublished" datetime="2020-08-27T08:11:39+08:00">2020-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-20 23:44:53" itemprop="dateModified" datetime="2021-08-20T23:44:53+08:00">2021-08-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/Redux/" itemprop="url" rel="index"><span itemprop="name">Redux</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/Redux/Dva/" itemprop="url" rel="index"><span itemprop="name">Dva</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一款整合 <a target="_blank" rel="noopener" href="https://github.com/reduxjs/redux">redux</a> 和 <a target="_blank" rel="noopener" href="https://github.com/redux-saga/redux-saga">redux-saga</a> 开发的一款脚手架，其内置了一些 React 项目常用的一些插件和配置，我们只需按照其给出的配置和架构，可以很简单的搭建出我们的项目，我们可以理解为一个轻量级的应用框架。</p>
+<span id="more"></span>
+
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><p>内置 redux 与 redux-saga，所以其数据的流向基本是与 redux-saga 相同的，也就是 view 可以通过 <code>dispatch</code> 发送一个 action，用于描述要进行的操作，如果是同步行为会直接通过 <code>Reducers</code> 修改 <code>State</code>，如果是异步行为会先触发 <code>Effects</code> 然后流向 <code>Reducers</code> 最终改变 <code>State</code>。</p>
+<h2 id="Models"><a href="#Models" class="headerlink" title="Models"></a>Models</h2><p>非常核心的一个概念，官网给出下面的例子：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">app.model(&#123;</span><br><span class="line">  <span class="attr">namespace</span>: <span class="string">&#x27;todo&#x27;</span>,</span><br><span class="line">  <span class="attr">state</span>: [],</span><br><span class="line">  <span class="attr">reducers</span>: &#123;</span><br><span class="line">    <span class="function"><span class="title">add</span>(<span class="params">state, &#123; payload: todo &#125;</span>)</span> &#123;</span><br><span class="line">      <span class="comment">// 保存数据到 state</span></span><br><span class="line">      <span class="keyword">return</span> [...state, todo];</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">effects</span>: &#123;</span><br><span class="line">    *<span class="function"><span class="title">save</span>(<span class="params">&#123; payload: todo &#125;, &#123; put, call &#125;</span>)</span> &#123;</span><br><span class="line">      <span class="comment">// 调用 saveTodoToServer，成功后触发 `add` action 保存到 state</span></span><br><span class="line">      <span class="keyword">yield</span> call(saveTodoToServer, todo);</span><br><span class="line">      <span class="keyword">yield</span> put(&#123; <span class="attr">type</span>: <span class="string">&#x27;add&#x27;</span>, <span class="attr">payload</span>: todo &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">subscriptions</span>: &#123;</span><br><span class="line">    <span class="function"><span class="title">setup</span>(<span class="params">&#123; history, dispatch &#125;</span>)</span> &#123;</span><br><span class="line">      <span class="comment">// 监听 history 变化，当进入 `/` 时触发 `load` action</span></span><br><span class="line">      <span class="keyword">return</span> history.listen(<span class="function">(<span class="params">&#123; pathname &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (pathname === <span class="string">&#x27;/&#x27;</span>) &#123;</span><br><span class="line">          dispatch(&#123; <span class="attr">type</span>: <span class="string">&#x27;load&#x27;</span> &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>我们只需分析其 5 个属性：</p>
+<h3 id="namespace"><a href="#namespace" class="headerlink" title="namespace"></a>namespace</h3><p>为了防止数据的名称覆盖的问题，可以使用 <code>namespace</code> 也就是数据命名空间，如果启用访问数据时需要指定添加命名空间，但是支支持字符串，并不支持通过 . 的方式创建多层命名空间。</p>
+<h3 id="state"><a href="#state" class="headerlink" title="state"></a>state</h3><p>设置 Models 的初始值，但是其有限度低于 <code>opts.initialState</code>。<br>比如下面代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> app = dva(&#123;</span><br><span class="line">  <span class="attr">initialState</span>: &#123; <span class="attr">count</span>: <span class="number">1</span> &#125;,</span><br><span class="line">&#125;);</span><br><span class="line">app.model(&#123;</span><br><span class="line">  <span class="attr">namespace</span>: <span class="string">&#x27;count&#x27;</span>,</span><br><span class="line">  <span class="attr">state</span>: <span class="number">0</span>,</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>此时 <code>state.count</code> 的值为 1。</p>
+<h3 id="reducers"><a href="#reducers" class="headerlink" title="reducers"></a>reducers</h3><p>如果使用过 redux 便熟悉此属性，其是唯一一个可以修改 <code>state</code> 的地方。必须通过 <code>dispatch</code> 发送一个 action 才能触发，这里就不过多介绍了。</p>
+<h3 id="effects"><a href="#effects" class="headerlink" title="effects"></a>effects</h3><p>用于处理异步的 action，但不能修改 <code>state</code> 数据。由于 redux 中 reducers 是不能处理异步请求的，所以如果包含异步逻辑，需要先通过 action 触发 <code>effects</code>，当处理完成异步逻辑后，可以在 effects 中调用 reducers 函数，进行数据的修改。<br><strong>切记 <code>effects</code> 只能处理异步逻辑，不能用于修改数据。</strong></p>
+<h3 id="subscriptions"><a href="#subscriptions" class="headerlink" title="subscriptions"></a>subscriptions</h3><p>数据订阅，用于订阅一个数据源，并且数据源不一定是 <code>state</code> 中的数据，还可以是当前的时间、websocket 连接、keyboard 输入、geolocation 变化、history 路由变化等等。</p>
+<h2 id="connect"><a href="#connect" class="headerlink" title="connect"></a>connect</h2><p>当 Models 定义完成后，我们便可以在组件中使用其定义的数据，只需通过 <code>connect</code> 就可以将自定义组件和 Dva Models 进行连接，但是使用时一定要注意加上 <code>namespace(命名空间)</code>。</p>
+<p>比如我们根据规则，新建 <code>models/products.js</code> 文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> &#123;</span><br><span class="line">  <span class="attr">namespace</span>: <span class="string">&#x27;products&#x27;</span>,</span><br><span class="line">  <span class="attr">state</span>: [],</span><br><span class="line">  <span class="attr">reducers</span>: &#123;</span><br><span class="line">    <span class="string">&#x27;filterByID&#x27;</span>(state, &#123; <span class="attr">payload</span>: id &#125;) &#123;</span><br><span class="line">      <span class="keyword">return</span> state.filter(<span class="function"><span class="params">item</span> =&gt;</span> item.id !== id);</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>然后我们只需新建 <code>routes/Products.js</code> 文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; connect &#125; <span class="keyword">from</span> <span class="string">&#x27;dva&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> ProductList <span class="keyword">from</span> <span class="string">&#x27;../components/ProductList&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Products = <span class="function">(<span class="params">&#123; dispatch, products &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="function"><span class="keyword">function</span> <span class="title">handleDelete</span>(<span class="params">id</span>) </span>&#123;</span><br><span class="line">    dispatch(&#123;</span><br><span class="line">      <span class="attr">type</span>: <span class="string">&#x27;products/filterByID&#x27;</span>,</span><br><span class="line">      <span class="attr">payload</span>: id,</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">h2</span>&gt;</span>List of Products<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">ProductList</span> <span class="attr">onDelete</span>=<span class="string">&#123;handleDelete&#125;</span> <span class="attr">products</span>=<span class="string">&#123;products&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// connect</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> connect(<span class="function">(<span class="params">&#123; products &#125;</span>) =&gt;</span> (&#123;</span><br><span class="line">  products,</span><br><span class="line">&#125;))(Products);</span><br></pre></td></tr></table></figure>
+<p>只需要这样便能正常使用了，不再像 redux 还需要数据注入，添加中间件等，只需要按照 Dva 的约定，在指定目录下新增文件便能自动注入数据，使项目更加自动化。</p>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>在以前的 React 项目中，路由主要依靠 <a target="_blank" rel="noopener" href="https://github.com/remix-run/react-router">react-router</a> 来完成，每当新增界面时也必须新增 <code>Route</code>，否则是不能访问的，这就显得不够智能自动化，而使用 Dva 却可以自动完成路由。<br>比如我们新增 <code>routes/products /index.js</code> 文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Products = <span class="function">(<span class="params">props</span>) =&gt;</span> (</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>List of Products<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Products;</span><br></pre></td></tr></table></figure>
+<p>这样我们可以直接通过 <code>http://localhost:8000/#/products</code> 访问界面。这样只需要按照指定规则新增文件，就可以自动化完成路由。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Dva 是一款轻量级的应用框架，其内部规定了一系列的规则和配置。其内部还是以前 React + React-Router + Redux + Redux-saga 的架构，但其内部对于各个常用的配置都进行了封装，并规定了项目的架构，这使得项目使用起来更加自动化、也更容易上手和维护。，</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://dvajs.com/">dvajs</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%84%9A%E6%89%8B%E6%9E%B6/" rel="tag"># 脚手架</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/react-mobx/" rel="prev" title="MobX">
+      <i class="fa fa-chevron-left"></i> MobX
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/es6-let-const/" rel="next" title="let 和 const">
+      let 和 const <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81"><span class="nav-number">1.</span> <span class="nav-text">数据流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Models"><span class="nav-number">2.</span> <span class="nav-text">Models</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#namespace"><span class="nav-number">2.1.</span> <span class="nav-text">namespace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#state"><span class="nav-number">2.2.</span> <span class="nav-text">state</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reducers"><span class="nav-number">2.3.</span> <span class="nav-text">reducers</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#effects"><span class="nav-number">2.4.</span> <span class="nav-text">effects</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#subscriptions"><span class="nav-number">2.5.</span> <span class="nav-text">subscriptions</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#connect"><span class="nav-number">3.</span> <span class="nav-text">connect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">4.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

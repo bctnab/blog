@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一款使用 React 开发的服务端渲染框架，社区 的活跃度也是非常高，支持静态和服务端渲染两种方式，以及 TS、智能化打包、 路由预取等功能并无需任何配置。如果你需要搭建一个 SSR 类型项目(如个人博客、个人图库)，那么其是个首选框架。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Next.js">
+<meta property="og:url" content="https://bipch.cn/next/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="一款使用 React 开发的服务端渲染框架，社区 的活跃度也是非常高，支持静态和服务端渲染两种方式，以及 TS、智能化打包、 路由预取等功能并无需任何配置。如果你需要搭建一个 SSR 类型项目(如个人博客、个人图库)，那么其是个首选框架。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-27T15:29:22.000Z">
+<meta property="article:modified_time" content="2021-11-09T15:30:17.233Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="服务端渲染">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/next/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Next.js | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/next/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Next.js
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-27 23:29:22" itemprop="dateCreated datePublished" datetime="2021-01-27T23:29:22+08:00">2021-01-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-09 23:30:17" itemprop="dateModified" datetime="2021-11-09T23:30:17+08:00">2021-11-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一款使用 React 开发的服务端渲染框架，<a target="_blank" rel="noopener" href="https://github.com/vercel/next.js">社区</a> 的活跃度也是非常高，支持静态和服务端渲染两种方式，以及 TS、智能化打包、 路由预取等功能并无需任何配置。如果你需要搭建一个 SSR 类型项目(如个人博客、个人图库)，那么其是个首选框架。</p>
+<span id="more"></span>
+
+<h2 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h2><p>将组件或页面由服务端解析，服务端请求数据并填充得到最终的 html 字符串返回客户端。<br>这样做优势在于：</p>
+<ol>
+<li>利于SEO：平常界面信息都是通过客户端 JS 动态拼接生成的，需要服务端返回相应的数据才能正确显示，但浏览器爬虫并不会等界面完全加载之后才会抓取。而服务端渲染则更便于爬虫抓取整个网页的信息。</li>
+<li>前端资源占用较少：因为服务端渲染完全由服务端返回客户端 HTML 字符串，客户端不再需要另外解析文件，这样前端消耗资源更少。</li>
+<li>安全性较高：由于界面的所有信息都是服务端拼接而成，所以界面不会太多敏感信息。</li>
+</ol>
+<p>当然其也不是全是优点，缺点也非常多：</p>
+<ol>
+<li>服务器压力大：本来属于客户端的工作，现在统一交给服务端去做，如果出现高并发会对服务器造成不小负担。</li>
+<li>首屏加载速度较慢：由于解析大部分文件都需要首屏进行加载，所以首次加载会比较慢的，并且界面跳转由于都靠后台解析界面，所以可能会出现暂时的白屏界面。</li>
+</ol>
+<h2 id="hello-world"><a href="#hello-world" class="headerlink" title="hello world"></a>hello world</h2><p>空文件下安装开发闭包插件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn add next react react-dom</span><br></pre></td></tr></table></figure>
+<p>修改 <code>package.json</code> 中的命令：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;scripts&quot;</span>: &#123;</span><br><span class="line">  <span class="attr">&quot;dev&quot;</span>: <span class="string">&quot;next&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;build&quot;</span>: <span class="string">&quot; next build&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;start&quot;</span>: <span class="string">&quot;next start&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3 个命令每个都有着自己作用，后面会介绍，新建一个文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Home</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>hello world<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Home;</span><br></pre></td></tr></table></figure>
+<p>执行 <code>yarn dev</code> 运行项目，运行成功后，直接输入： <a target="_blank" rel="noopener" href="http://localhost:3000/home">http://localhost:3000/home</a> 即可访问界面，不需再需要路由相关的封装，根据约定 <code>page</code> 下的所有文件都会自动创建路由。</p>
+<h2 id="基本特性"><a href="#基本特性" class="headerlink" title="基本特性"></a>基本特性</h2><p>由于其是在服务端进行预渲染，所以和以前开发方式会显得略有不同。</p>
+<h3 id="Pages"><a href="#Pages" class="headerlink" title="Pages"></a>Pages</h3><p>代表用户看到的界面，其后缀名可以为 <code>.js</code>、<code>.jsx</code>、<code>.ts</code>、<code>.tsx</code>，但是无论何种文件，其导出内容必须为 React 组件; 并且项目中所有 page 必须放到 <code>/pages</code> 目录下，项目会自动根据位置生成路由，具体路由生成规则可以看下文的 <a href="#路由">路由</a>。</p>
+<blockquote>
+<p>比如界面地址为 <code>/pages/user/index.js</code>，那么它的访问路径便为 <code>/user</code>，不在需要 react-router-dom。</p>
+</blockquote>
+<h4 id="两种预渲染"><a href="#两种预渲染" class="headerlink" title="两种预渲染"></a>两种预渲染</h4><p>界面在 Next 中界面有两种预渲染的方式：<code>静态生成</code> 和 <code>服务器端渲染</code>。</p>
+<ul>
+<li><strong>静态生成</strong>：也是官网比较推荐的，在我们 build 时便生成 html 文件(build 时会去 request 接口，最终形成一些静态的 html 界面)。</li>
+<li><strong>服务器端渲染</strong>：只有请求界面时才去 request 后台 API，然后重写生成 HTML 文件。</li>
+</ul>
+<p>我们使用 page 时一定要注意调用 API 的时机，并且 <strong>我们每个界面都可以选择一个渲染的方式</strong>。<br>在选择 page 具体使用那些渲染方式时，界面性能一定是不可忽视的一部分，而 <strong>静态生成界面的性能远高于服务器端渲染</strong>，所以除非有些特殊情况否则推荐静态生成方式渲染，其配合 CDN 缓存，将带给用户带来很好的体验。</p>
+<h4 id="静态生成"><a href="#静态生成" class="headerlink" title="静态生成"></a>静态生成</h4><p>此方式也是 Next 官网推荐的一种方式，我们在 build 时根据 page 为模板，可以生成一系列的 html 界面，并配合 CDN 缓存，可以很大幅度提升浏览器的加载速度，因为最终结果只是些静态界面，并配合缓存，性能很难不上去。<br>静态生成界面也有两种形式:</p>
+<ol>
+<li>第一种是纯静态界面，界面信息都是纯静态信息，不涉及获取数据。此时 Next 构建时为每个页面生成一个 HTML 文件即可(不介绍)。</li>
+<li>界面需要获取数据，根据数据动态生成界面。</li>
+</ol>
+<p>界面获取数据进行预渲染。也有两种情况，一种或两种都可能适用。在每种情况下，您都可以使用 Next.js 提供的特殊功能：</p>
+<ol>
+<li>界面 <strong>内容</strong> 取决于外部数据，使用 <code>getStaticProps</code>。</li>
+<li>界面 <strong>paths 路径</strong> 取决于外部数据，使用 <code>getStaticPaths</code>(通常需要 <code>getStaticProps</code> 配合)。</li>
+</ol>
+<h5 id="内容取决于外部数据"><a href="#内容取决于外部数据" class="headerlink" title="内容取决于外部数据"></a>内容取决于外部数据</h5><p>例如我们有个博客系统，首页需展示博文列表：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Blog</span>(<span class="params">&#123; posts &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">      &#123;posts.map((post) =&gt; (</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>&#123;post.title&#125;<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">      ))&#125;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Blog</span><br></pre></td></tr></table></figure>
+<p>我们导出了一个 React 组件，其需要一个 posts 作为数据，而此数据是 request API 得到。Next.js 则会允许从同一文件 <code>export</code> 一个名为 <code>getStaticProps</code> 的 <code>async</code> 函数。该函数在构建时被调用，并允许你在预渲染时将获取的数据作为 <code>props</code> 参数传递给页面。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Blog</span>(<span class="params">&#123; posts &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Render posts...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 构建时被调用</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getStaticProps</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 调用外部 API 获取博文列表</span></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">&#x27;https://.../posts&#x27;</span>)</span><br><span class="line">  <span class="keyword">const</span> posts = <span class="keyword">await</span> res.json()</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">props</span>: &#123;</span><br><span class="line">      posts</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Blog</span><br></pre></td></tr></table></figure>
+<p>注意其只会把 <code>props</code> 内的数据传递给组件，其他一律接收不到。</p>
+<h5 id="路径取决于外部数据"><a href="#路径取决于外部数据" class="headerlink" title="路径取决于外部数据"></a>路径取决于外部数据</h5><p>此功能需要结合动态路由使用，我们可以创建一个名为 <code>pages/posts/[id].js</code> 的文件用以展示以 <code>id</code> 标识的单篇博客文章。<br>比如我们有 id 为 [1, 2, 3, 4] 的博客，那么如果我们需要为每个 id 都生成详情界面，此时预渲染的页面 <strong>paths(路径)</strong> 取决于外部数据。为了解决这个问题，Next.js 允许你从动态页面中 <code>export</code> 一个名为 <code>getStaticPaths</code> 的 <code>async</code> 函数。该函数在构建时被调用，并允许你指定要预渲染的路径。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 构建时被调用</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getStaticPaths</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 调用外部 API 获取博文列表</span></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">&#x27;https://.../posts&#x27;</span>)</span><br><span class="line">  <span class="keyword">const</span> posts = <span class="keyword">await</span> res.json()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 据博文列表生成所有需要预渲染的路径</span></span><br><span class="line">  <span class="keyword">const</span> paths = posts.map(<span class="function">(<span class="params">post</span>) =&gt;</span> (&#123;</span><br><span class="line">    <span class="attr">params</span>: &#123; <span class="attr">id</span>: post.id &#125;,</span><br><span class="line">  &#125;))</span><br><span class="line"></span><br><span class="line">  <span class="comment">// fallback: 其他路径是否 404</span></span><br><span class="line">  <span class="keyword">return</span> &#123; paths, <span class="attr">fallback</span>: <span class="literal">false</span> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们便给所有 id 构建了一个界面，当然我们还需要导出 <code>getStaticProps</code> 方法，用于根据 id 获取每页的数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Post</span>(<span class="params">&#123; post &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Render post...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getStaticPaths</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在构建时也会被调用</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getStaticProps</span>(<span class="params">&#123; params &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// params 包含此片博文的 `id` 信息。</span></span><br><span class="line">  <span class="comment">// 如果路由是 /posts/1，那么 params.id 就是 1</span></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">`https://.../<span class="subst">$&#123;params.id&#125;</span>`</span>)</span><br><span class="line">  <span class="keyword">const</span> post = <span class="keyword">await</span> res.json()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 通过 props 参数向页面传递博文的数据</span></span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">props</span>: &#123; post &#125; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Post</span><br></pre></td></tr></table></figure>
+<h4 id="服务器端渲染"><a href="#服务器端渲染" class="headerlink" title="服务器端渲染"></a>服务器端渲染</h4><p>此方式也称之为 <code>SSR</code>，主要 <strong>使用服务端进行渲染</strong>，在 <strong>每次页面请求时</strong> 都重新生成 HTML 返回。<br>如需此方式渲染，你需要 <code>export</code> 一个名为 <code>getServerSideProps</code> 的 <code>async</code> 函数。服务器将在每次页面请求时调用此函数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Page</span>(<span class="params">&#123; data &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Render data...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getServerSideProps</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// Fetch data from external API</span></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">`https://.../data`</span>)</span><br><span class="line">  <span class="keyword">const</span> data = <span class="keyword">await</span> res.json()</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Pass data to the page via props</span></span><br><span class="line">  <span class="keyword">return</span> &#123; <span class="attr">props</span>: &#123; data &#125; &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Page</span><br></pre></td></tr></table></figure>
+<p>这样每次请求界面都会去执行，并数据传递的方式和 <code>getStaticProps</code> 非常的相似。不同就是 <code>getServerSideProps</code> 只会在用户请求界面时执行，构建时不执行。</p>
+<h4 id="使用那种方式"><a href="#使用那种方式" class="headerlink" title="使用那种方式"></a>使用那种方式</h4><p>如果有可能请尽量使用 <strong>静态生成</strong>，其配合 CDN 对界面和请求资源进行缓存，这比让服务器根据每个页面请求来渲染页面快得多。<br>而当我们只需确定：我可以在用户请求之前预先渲染此页面吗？<br>如果是，那么请使用 <strong>静态生成</strong>，比如：</p>
+<ul>
+<li>博客文章</li>
+<li>帮助和文档</li>
+<li>产品展示界面</li>
+</ul>
+<p>但是如果需要用户每次请求都请求 API，那么请使用 <strong>服务器端渲染</strong>。</p>
+<h3 id="样式引入"><a href="#样式引入" class="headerlink" title="样式引入"></a>样式引入</h3><h4 id="全局样式"><a href="#全局样式" class="headerlink" title="全局样式"></a>全局样式</h4><p>Next.js 规定全局样式必须在 <code>pages/_app.js</code> 内引入，如果没有可以新增：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;../style/styles.css&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新创建的 `pages/_app.js` 文件中必须有此默认的导出（export）函数</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">MyApp</span>(<span class="params">&#123; Component, pageProps &#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">Component</span> &#123;<span class="attr">...pageProps</span>&#125; /&gt;</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样样式将被用于所有的组件中，但其为了避免样式冲突，其 <strong>只能</strong> 在 <code>pages/_app.js</code> 中引入。</p>
+<h4 id="组件级-CSS"><a href="#组件级-CSS" class="headerlink" title="组件级 CSS"></a>组件级 CSS</h4><p>虽然我们可以定义一些全局样式，但是有些样式是某些组件特有的，那么我们可以通过 <a target="_blank" rel="noopener" href="https://github.com/css-modules/css-modules">CSS 模块</a> 的约定新增 <code>[name].module.css</code> 文件。<br>比如 <code>/components/</code> 目录下有个 <code>Button</code>，那么我们创建 <code>/components/Button.module.css</code>，然后我们在组件中引入样式：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> styles <span class="keyword">from</span> <span class="string">&#x27;./Button.module.css&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">Button</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">button</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      <span class="attr">type</span>=<span class="string">&quot;button&quot;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">      <span class="attr">className</span>=<span class="string">&#123;styles.error&#125;</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">    &gt;</span></span></span><br><span class="line"><span class="xml">      Destroy</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样便能使用组件级的 CSS 了。</p>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>Next.js 规定为 <code>pages</code> 下所有文件生成路由，路由的地址取决于界面相对与 pages 的路径，并会寻找文件夹下的 index 文件。比如：</p>
+<ul>
+<li><code>/pages/index.js</code> 路径为 <code>/</code></li>
+<li><code>/pages/blog/index.js</code> 路径为 <code>/blog</code></li>
+<li><code>/pages/blog/first-post.js</code> 路径为 <code>/blog/first-post</code></li>
+</ul>
+<h3 id="动态路由"><a href="#动态路由" class="headerlink" title="动态路由"></a>动态路由</h3><p>除了上面方式的路由，有时我们还需要更高级的路由，比如界面需要外部界面通过 param 方式传入的 id，那么我们可将文件夹名称设置为 <code>[param].js</code>。<br>比如新增 <code>/pages/post/[id].js</code> 文件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useRouter &#125; <span class="keyword">from</span> <span class="string">&#x27;next/router&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Post = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> router = useRouter();</span><br><span class="line">  <span class="keyword">const</span> &#123; id &#125; = router.query;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span>Post: &#123;id&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Post;</span><br></pre></td></tr></table></figure>
+<p>这样任何像 <code>/post/1</code>、<code>/post/abc</code> 等路由都会匹配到 <code>/pages/post/[id].js</code> 文件，并将匹配到的参数发送到组件中。<br>我们还可以使用 <code>[...param]</code> 匹配后面所有字段。比如新增 <code>pages/post/[...param].js</code> 文件，那么 <code>/post</code> 后面的所有路径都会匹配到该界面，比如 <code>/post/a</code> 那么 <code>router.query</code> 就为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="string">&quot;param&quot;</span>: [<span class="string">&quot;a&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
+<p>如果路径为 <code>/post/a/b</code> 那么 <code>router.query</code> 获取到的数据为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; <span class="string">&quot;param&quot;</span>: [<span class="string">&quot;a&quot;</span>, <span class="string">&quot;b&quot;</span>] &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="界面跳转"><a href="#界面跳转" class="headerlink" title="界面跳转"></a>界面跳转</h3><p>既然路由是根据相对路径生成的，那么如果需要界面之间跳转该怎么做呢？<br>Next.js 为我们提供了两种界面跳转的方式：<br>第一种是引入 <code>Link</code> 组件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Link <span class="keyword">from</span> <span class="string">&#x27;next/link&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Page</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">Link</span> <span class="attr">href</span>=<span class="string">&quot;/&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">          <span class="tag">&lt;<span class="name">a</span>&gt;</span>Home<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">Link</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Page;</span><br></pre></td></tr></table></figure>
+<p>除了此种方式能跳转，有时候我们跳转前需要处理一些逻辑，等逻辑处理完成使用 JS 跳转，这时我们便需要 <code>useRouter</code> 了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useRouter &#125; <span class="keyword">from</span> <span class="string">&#x27;next/router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">Page</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> router = useRouter();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> router.push(&#x27;/about&#x27;)&#125;&gt;</span></span><br><span class="line"><span class="xml">      Click me</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样我们可以使用 JS 控制界面跳转。</p>
+<h3 id="浅路由"><a href="#浅路由" class="headerlink" title="浅路由"></a>浅路由</h3><p>浅路由允许您更改，但不再次运行数据获取方法的URL，包括 <code>getServerSideProps</code>，<code>getStaticProps</code>，和 <code>getInitialProps</code>。<br>而你更新的 <code>router</code> 对象中的 <code>pathname</code> 和 <code>query</code> 将会正常收到，而且界面不会刷新状态不会丢失。<br>要启用浅层路由，将 <code>shallow</code> 选项设置为 <code>true</code>。比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; useEffect &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123; useRouter &#125; <span class="keyword">from</span> <span class="string">&#x27;next/router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Page</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> router = useRouter();</span><br><span class="line"></span><br><span class="line">  useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// The counter changed!</span></span><br><span class="line">  &#125;, [router.query.counter])</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">goPage</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    router.push(<span class="string">&#x27;/?counter=10&#x27;</span>, <span class="literal">undefined</span>, &#123; <span class="attr">shallow</span>: <span class="literal">true</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Page</span><br></pre></td></tr></table></figure>
+<p>这样不修改 url 只修改传递的参数，页面不会被替换，只会更改路由的状态。<br>也可以通过配合 <code>componentDidUpdate</code> 生命周期判断组件是否需要重新渲染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">componentDidUpdate</span>(<span class="params">prevProps</span>)</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; pathname, query &#125; = <span class="built_in">this</span>.props.router</span><br><span class="line">  <span class="comment">// verify props have changed to avoid an infinite loop</span></span><br><span class="line">  <span class="keyword">if</span> (query.counter !== prevProps.router.query.counter) &#123;</span><br><span class="line">    <span class="comment">// fetch data based on the new query</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.nextjs.cn/docs/getting-started">next.js 中文文档</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B8%B2%E6%9F%93/" rel="tag"># 服务端渲染</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/nginx-https/" rel="prev" title="Nginx配置https">
+      <i class="fa fa-chevron-left"></i> Nginx配置https
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/pm2-nginx/" rel="next" title="pm2 + Nginx 部署 Koa2">
+      pm2 + Nginx 部署 Koa2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SSR"><span class="nav-number">1.</span> <span class="nav-text">SSR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hello-world"><span class="nav-number">2.</span> <span class="nav-text">hello world</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%89%B9%E6%80%A7"><span class="nav-number">3.</span> <span class="nav-text">基本特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Pages"><span class="nav-number">3.1.</span> <span class="nav-text">Pages</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E9%A2%84%E6%B8%B2%E6%9F%93"><span class="nav-number">3.1.1.</span> <span class="nav-text">两种预渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E7%94%9F%E6%88%90"><span class="nav-number">3.1.2.</span> <span class="nav-text">静态生成</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E5%8F%96%E5%86%B3%E4%BA%8E%E5%A4%96%E9%83%A8%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">内容取决于外部数据</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E8%B7%AF%E5%BE%84%E5%8F%96%E5%86%B3%E4%BA%8E%E5%A4%96%E9%83%A8%E6%95%B0%E6%8D%AE"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">路径取决于外部数据</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%B8%B2%E6%9F%93"><span class="nav-number">3.1.3.</span> <span class="nav-text">服务器端渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%82%A3%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.4.</span> <span class="nav-text">使用那种方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B7%E5%BC%8F%E5%BC%95%E5%85%A5"><span class="nav-number">3.2.</span> <span class="nav-text">样式引入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E6%A0%B7%E5%BC%8F"><span class="nav-number">3.2.1.</span> <span class="nav-text">全局样式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E7%BA%A7-CSS"><span class="nav-number">3.2.2.</span> <span class="nav-text">组件级 CSS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">4.</span> <span class="nav-text">路由</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B7%AF%E7%94%B1"><span class="nav-number">4.1.</span> <span class="nav-text">动态路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%95%8C%E9%9D%A2%E8%B7%B3%E8%BD%AC"><span class="nav-number">4.2.</span> <span class="nav-text">界面跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%85%E8%B7%AF%E7%94%B1"><span class="nav-number">4.3.</span> <span class="nav-text">浅路由</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

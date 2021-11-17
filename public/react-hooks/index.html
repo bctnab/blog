@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Hook 是 React 16.8 引入的新特性，它可以使我们在不编写类组件的情况下可以去使用 state、生命周期函数、 以及一些其他的 React 功能。并且 Hook 可以从各个组件中提取状态逻辑，以便于代码的复用，并使得样组件之间共享数据就变得很简单。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="react-hooks">
+<meta property="og:url" content="https://bipch.cn/react-hooks/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="Hook 是 React 16.8 引入的新特性，它可以使我们在不编写类组件的情况下可以去使用 state、生命周期函数、 以及一些其他的 React 功能。并且 Hook 可以从各个组件中提取状态逻辑，以便于代码的复用，并使得样组件之间共享数据就变得很简单。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-18T00:20:34.000Z">
+<meta property="article:modified_time" content="2021-08-22T14:08:17.200Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Hooks">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/react-hooks/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>react-hooks | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/react-hooks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          react-hooks
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-05-18 08:20:34" itemprop="dateCreated datePublished" datetime="2020-05-18T08:20:34+08:00">2020-05-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-22 22:08:17" itemprop="dateModified" datetime="2021-08-22T22:08:17+08:00">2021-08-22</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Hook 是 React 16.8 引入的新特性，它可以使我们在不编写类组件的情况下可以去使用 state、生命周期函数、 以及一些其他的 React 功能。并且 Hook 可以从各个组件中提取状态逻辑，以便于代码的复用，并使得样组件之间共享数据就变得很简单。</p>
+<span id="more"></span>
+
+<h2 id="为什么使用-Hook"><a href="#为什么使用-Hook" class="headerlink" title="为什么使用 Hook"></a>为什么使用 Hook</h2><p>React 设计中认为组件是代码复用的最小单元，每个功能都有若干组件组成，并且每个组件都不单纯的孤岛，组件之间是可能会产生联系的，一方面是数据的共享，另一个是功能的复用。</p>
+<ul>
+<li>对于组件共享数据，React 采用单向数据流（Flux）进行解决。</li>
+<li>对于类组件功能的复用，React 的开发团队也提出过了许多的解决方案，比如早期使用的 <code>Mixins</code>、以及后面提出的 <code>Higher Order Component(简称HOC)</code>、以及 <code>Render Props</code>，可能后面还会有更好的开发理念。</li>
+</ul>
+<p>虽然 React 开发团队提出了类组件代码复用的解决方案，但是每个方案都有这自己的问题，在加上难以理解的 class，所以 React 开发团队便推出了 <code>Function Component + Hooks</code> 的开发方式。<br>但是有一点虽然 React 开发团队提议使用 Function Component + Hooks，但 <strong>没有计划从 React 中移除 class</strong>。</p>
+<h2 id="State-Hooks"><a href="#State-Hooks" class="headerlink" title="State Hooks"></a>State Hooks</h2><p>这种开发方式允许我们在 function 组件中使用 state 状态。并且可以抽取相同的 state 状态和逻辑是数据得到更好的复用。比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123;useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">App</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 赋值，初始值 0</span></span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;App&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">header</span> <span class="attr">className</span>=<span class="string">&quot;App-header&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>num: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(state =&gt; state + 1)&#125;&gt;+<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(state =&gt; state - 1)&#125;&gt;-<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们定义了一个变量 <code>count</code>，这个名称可以是任意的，useState 返回值是个数组，我们可以使用任意名称接收。setCount 为修改数据需要调用的方法，它与 class 里的 <code>this.state</code> 提供的功能完全相同。但是函数中的变量退出后会消失，而 state 中的变量会在 React 中保留。</p>
+<blockquote>
+<p>useState 进行数据赋值是覆盖式更新，<strong>并不会合并数据</strong> 如果数据格式复杂注意不要覆盖一些变量。一些复杂的数据格式我们可以使用 es6 的扩展运算符帮助我们解决数据覆盖的问题，如 {…source, count: 1} 这样 count 就会覆盖 source 中的 count。</p>
+</blockquote>
+<h2 id="Effect-Hook"><a href="#Effect-Hook" class="headerlink" title="Effect Hook"></a>Effect Hook</h2><p>如果我们在需要在函数组件中执行副作用操作，如果你熟悉 React class 的生命周期那么就可以将 Effect Hook 看作 <code>componentDidMount</code>， <code>componentDidUpdate</code>， <code>componentWillUnmount</code> 这三个函数的组合。我们可以在这个地方获取数据、设置订阅，手动的更改 DOM 等操作，也可以在卸载一些订阅。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123;useState&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">App</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="comment">// 赋值，初始值 0</span></span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(<span class="number">0</span>);</span><br><span class="line">  useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">document</span>.title = <span class="string">`you clicked <span class="subst">$&#123;count&#125;</span> times`</span>;</span><br><span class="line">  &#125;, [count]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">&quot;App&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">header</span> <span class="attr">className</span>=<span class="string">&quot;App-header&quot;</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>num: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(state =&gt; state + 1)&#125;&gt;+<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(state =&gt; state - 1)&#125;&gt;-<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">header</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样就会监听 count 的变化，如果 <code>[count]</code> 中的任意数据有所变化，便会执行相应的 <code>useEffect</code> 中的代码。<br>主要有下面几点需要说明：</p>
+<ol>
+<li><code>useEffect(callback: () =&gt; void，deps: array[])</code> 方法接收两个参数，第二个为选填参数。表示 Effect 更新需要依赖那些属性。</li>
+<li>由于一个组件可以有多个 Effect 所以我们有的 Effect 并不是有属性更新便会调用，而是具体指定 Effect 的依赖列表。</li>
+<li>第一个参数界面加载完成后便会执行相当于 <code>componentDidMount</code> ，如果有依赖列表数据变化，便会在执行该函数，这时相当于 <code>componentDidUpdate</code>，如果该函数返回了一个函数，则返回的函数会在组件卸载时调用，这时相当于 <code>componentWillUnmount</code>。</li>
+</ol>
+<h2 id="useContext"><a href="#useContext" class="headerlink" title="useContext"></a>useContext</h2><p>同样我们也可以在函数组件中使用 Context 定义的全局数据，比如我们可以通过下面的方式进行创建：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createContext &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> UserContext = createContext(&#123;&#125;);</span><br></pre></td></tr></table></figure>
+<p>这样 Context 对象就被创建好了，我们需要调用 Provider(生产者) 组件设置需要分享的初始值，方便子组件进行获取：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; UserContext &#125; <span class="keyword">from</span> <span class="string">&#x27;./UserContext&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> UserInfo <span class="keyword">from</span> <span class="string">&#x27;./user&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> User = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [user, setUser] = useState(<span class="string">&#x27;blog&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">UserContext.Provider</span> <span class="attr">value</span>=<span class="string">&#123;</span> &#123; <span class="attr">user</span>, <span class="attr">setUser</span> &#125; &#125;&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">UserInfo</span> /&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">UserContext.Provider</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> User;</span><br></pre></td></tr></table></figure>
+<p>当父组件共享值设置完成后，子组件如果需要父组件分享的数据可以通过 <code>useContext</code> API 获取：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useContext &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;UserContext&#125; <span class="keyword">from</span> <span class="string">&#x27;./UserContext&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> () =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> &#123; user, setUser &#125; = useContext(UserContext);</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>&#123;user&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span> = <span class="string">&#123;()</span> =&gt;</span> setUser(&#x27;123123&#x27;)&#125;&gt;</span></span><br><span class="line"><span class="xml">        set name</span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样便能在 Function Component 使用了 Context，并且使用的过程非常的简洁明了。</p>
+<h2 id="useMemo"><a href="#useMemo" class="headerlink" title="useMemo"></a>useMemo</h2><p>缓存一些比较复杂的计算，为了节约性能可以通过缓存计算结果并在下一个操作中重新使用缓存来加速查找费时的操作。而 <strong>useMemo</strong> 就是使用 <code>memoization</code> 来提升组件的性能。我们需要传给它一个依赖列表，它的值会作为 key，如果 key 值不变函数只会执行第一次后面便会从缓存获取，只有 key 修改才会进行重新计算。比如我们修改上面代码为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123;memo, useMemo&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> memo(</span><br><span class="line">  <span class="function">(<span class="params">&#123;user, setUser&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123;name, other&#125; = user;</span><br><span class="line">    <span class="keyword">const</span> useOther = useMemo(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// <span class="doctag">TODO:</span> 复杂逻辑处理</span></span><br><span class="line">      <span class="built_in">console</span>.log(<span class="string">&#x27;没有缓存&#x27;</span>);</span><br><span class="line">      <span class="keyword">return</span> other;</span><br><span class="line">    &#125;, [other]);</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>name: &#123;name&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>other: &#123;useOther&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span> = <span class="string">&#123;()</span> =&gt;</span> setUser(&#123;</span></span><br><span class="line"><span class="xml">          ...user,</span></span><br><span class="line"><span class="xml">          name: &#x27;123123&#x27;</span></span><br><span class="line"><span class="xml">        &#125;)&#125;&gt;</span></span><br><span class="line"><span class="xml">            set name</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span> = <span class="string">&#123;()</span> =&gt;</span> setUser(&#123;</span></span><br><span class="line"><span class="xml">            ...user,</span></span><br><span class="line"><span class="xml">            other: 0</span></span><br><span class="line"><span class="xml">        &#125;)&#125;&gt;</span></span><br><span class="line"><span class="xml">            set other</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> User;</span><br></pre></td></tr></table></figure>
+<p>这样只有 useMemo 函数中依赖项中的数据变化，才会执行函数中的值，否则会在缓存中进行获取。这样就极大提升了程序的性能。</p>
+<blockquote>
+<p>注意 <code>useMemo</code> 函数会在渲染期间执行。不要在该函数内部执行与渲染无关的操作，如果需要添加一些副作用函数要在 <code>useEffect</code> 而不是 <code>useMemo</code>。</p>
+</blockquote>
+<h2 id="useCallback"><a href="#useCallback" class="headerlink" title="useCallback"></a>useCallback</h2><p>该函数的作用和上面的 <code>useMemo</code> 作用非常的相似，但其作用是用于缓存一个函数。比如我们和上面一样也做一个测试:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState, useCallback &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> set = <span class="keyword">new</span> <span class="built_in">Set</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Count = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">const</span> [val, setVal] = useState(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> sum = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> callback = useCallback(sum, [count]);</span><br><span class="line"></span><br><span class="line">  set.add(callback);</span><br><span class="line">  <span class="built_in">console</span>.log(set);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">h4</span>&gt;</span>size: &#123;set.size&#125;<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">h4</span>&gt;</span>count: &#123;count&#125;<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">h4</span>&gt;</span>val: &#123;val&#125;<span class="tag">&lt;/<span class="name">h4</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(count + 1)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">&#123;val&#125;</span> <span class="attr">onChange</span>=<span class="string">&#123;event</span> =&gt;</span> setVal(event.target.value)&#125; /&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Count;</span><br></pre></td></tr></table></figure>
+<p>可以看到如果依赖项 count 不改变，sum 就不会重新执行。打印出的 set 集合存放的各种缓存函数。其实 <code>useCallback(fn, deps) === useMemo(() =&gt; fn, deps)</code> 作用是相同的，只是缓存的目的有所不同。</p>
+<p>比如我们有一个父组件，包含一个子组件，子组件接收一个函数作为 props。但是由于父组件任何数据修改，子组件便会执行更新，但是有很多情况下更新是没有必要的，我们可以借助 <code>useCallback</code> 和 <code>memo</code> 一起避免不必要的更新。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState, useCallback &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> ViewCount <span class="keyword">from</span> <span class="string">&#x27;./viewCount&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Count = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">const</span> [val, setVal] = useState(<span class="string">&#x27;&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> callback = useCallback(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">  &#125;, [count]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">ViewCount</span> <span class="attr">callback</span>=<span class="string">&#123;callback&#125;</span> /&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount(count + 1)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">&#123;val&#125;</span> <span class="attr">onChange</span>=<span class="string">&#123;event</span> =&gt;</span> setVal(event.target.value)&#125; /&gt;</span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Count;</span><br></pre></td></tr></table></figure>
+<p>而子组件需要结合 <code>memo</code> 避免重复渲染：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState, useEffect, memo &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> viewCount = memo(<span class="function">(<span class="params">&#123; callback &#125;</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(<span class="function">() =&gt;</span> callback());</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="number">0</span>);</span><br><span class="line">  useEffect(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setCount(callback());</span><br><span class="line">  &#125;, [callback]);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">p</span>&gt;</span> &#123; count &#125; <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> viewCount;</span><br></pre></td></tr></table></figure>
+<p>这样只有子组件数据改变或者父组件指定数据更新才会重新进行渲染。</p>
+<blockquote>
+<p>无论是 <code>useCallback</code> 还是 <code>useMemo</code> 都是避免子组件重复渲染，但都需要 <code>memo</code> 的配合，不然不仅不会提示性能，还是对程序性能造成一些影像。</p>
+</blockquote>
+<h2 id="memo"><a href="#memo" class="headerlink" title="memo"></a>memo</h2><p>如果父组件中的数据法师变化，子类型的 Function Component 都会更新，但是有些更新是无必要的，这样就造成性能的浪费，我们可以使用 <code>memo</code> 避免性能的浪费：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123;memo&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> memo(</span><br><span class="line">  <span class="function">(<span class="params">&#123;user, setUser&#125;</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;assembly Rendering&#x27;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>&#123;user&#125;<span class="tag">&lt;<span class="name">br</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span> = <span class="string">&#123;()</span> =&gt;</span> setUser(&#x27;123123&#x27;)&#125;&gt;set name<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>我们只需要使用 <code>memo</code> 包括函数，就会自动判断该组件依赖值是否改变，如果不改变便不会重新渲染。</p>
+<blockquote>
+<p>如果使用 class 组件该怎么解决重复渲染的问题呢? 熟悉 React 应该了解 <code>PureComponent</code> 和 <code>Component</code> 区别，主要靠钩子函数 <code>shouldComponentUpdate</code> 来进行比对，如果返回 true，则表示重复渲染，如果返回 false 则不会重新进行渲染。</p>
+</blockquote>
+<h2 id="useReducer"><a href="#useReducer" class="headerlink" title="useReducer"></a>useReducer</h2><p>上面介绍了 <code>useContext</code> 可以让 Function Component 使用 Context，而 <code>useReducer</code> 可以让该类型组件使用 reducer 方式定义数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, dispatch] = useReducer(reducer, initialArg, init);</span><br></pre></td></tr></table></figure>
+<p>共接收三个参数:</p>
+<ul>
+<li><strong>reducer</strong>: 一个 reducer 函数，和以前的 redux 函数的 reducer 相同，主要根据发送过来的 Action 处理 state 数据。</li>
+<li><strong>initialArg</strong>: 设置 useReducer state 的初始值。</li>
+<li><strong>init</strong>: 惰性地创建初始 state。其是一个函数，该函数返回初始化后的状态。</li>
+</ul>
+<p>如果您 state 逻辑较复杂且包含多个子值，或者下一个 state 依赖于之前的 state 等。这些情况都可以使用 useReducer 来替代 useState。并且使用 <code>useReducer</code> 还能给那些会触发深更新的组件做性能优化。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initialState = &#123;<span class="attr">count</span>: <span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reducer</span>(<span class="params">state, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;add&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;<span class="attr">count</span>: state.count + <span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;reduce&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> &#123;<span class="attr">count</span>: state.count - <span class="number">1</span>&#125;;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> Reducer = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [state, dispatch] = useReducer(reducer, initialState);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>count: &#123;state.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type: &#x27;add&#x27;&#125;)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type: &#x27;reduce&#x27;&#125;)&#125;&gt;-<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Reducer;</span><br></pre></td></tr></table></figure>
+<p>这样就可以使用 useReducer 来替代 <code>userState</code> 进行组件间的 state 管理。如果需要和子组件共享数据，可以将 <code>useReducer</code> 和 <code>useContext</code> 结合起来，这样所有子组件都可以共享这些数据了。</p>
+<h3 id="immer"><a href="#immer" class="headerlink" title="immer"></a>immer</h3><p><code>useReducer</code> 的定义和使用与 Redux 非常的相似，并且 reducer 中也是不能直接更新数据，只能返回一个新的数据，这样对于复杂的数据逻辑就会难以处理，我们可以借助 <code>immer</code> 插件来优化：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> produce <span class="keyword">from</span> <span class="string">&#x27;immer&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initialState = &#123;<span class="attr">count</span>: <span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reducer</span>(<span class="params">state, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;add&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> produce(state, <span class="function">(<span class="params">defaultState</span>) =&gt;</span> &#123;</span><br><span class="line">        defaultState.count = defaultState.count + <span class="number">1</span>;</span><br><span class="line">      &#125;);</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;reduce&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> produce(state, <span class="function">(<span class="params">defaultState</span>) =&gt;</span> &#123;</span><br><span class="line">        defaultState.count = defaultState.count - <span class="number">1</span>;</span><br><span class="line">      &#125;);</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出我们在 <code>immer</code> 中可以直接修改数据，至于其它的，完全交给该插件处理即可。</p>
+<h3 id="use-immer"><a href="#use-immer" class="headerlink" title="use-immer"></a>use-immer</h3><p>虽然上面的 <code>immer</code> 可以使 reducer 更简洁，但其毕竟不是针对 Hook 设计的，并且每次使用都需要引入，这使得用起来并不会太得心应手，这时可以用 <a target="_blank" rel="noopener" href="https://github.com/immerjs/use-immer">use-immer</a>，其就是特意为 hooks 封装之后的一个插件：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; useImmerReducer &#125; <span class="keyword">from</span> <span class="string">&#x27;use-immer&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initialState = &#123;<span class="attr">count</span>: <span class="number">0</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reducer</span>(<span class="params">state, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;add&#x27;</span>:</span><br><span class="line">      state.count = state.count + <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;reduce&#x27;</span>:</span><br><span class="line">      state.count = state.count - <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> Reducer = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [state, dispatch] = useReducer(reducer, initialState);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>count: &#123;state.count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type: &#x27;add&#x27;&#125;)&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> dispatch(&#123;type: &#x27;reduce&#x27;&#125;)&#125;&gt;-<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Reducer;</span><br></pre></td></tr></table></figure>
+<p>只需这样修改<code>useImmerReducer</code>创建的对象我们可以直接在 reducer 中修改 state。这样返回值就和 <code>userState</code> 很相似，第一个都为 state，第二个为修改 state 的对象。</p>
+<h2 id="自定义Hook"><a href="#自定义Hook" class="headerlink" title="自定义Hook"></a>自定义Hook</h2><p>逻辑复用的利器，Hook 之前只能使用 <code>HOC</code>、<code>Render props</code>去实现，但是这些都有自己得问题，并且都不是非常好用，而自定义 hook 可以在不添加组件的情况下实现同样的效果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; useState &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">useCount</span>(<span class="params">defaultValue</span>)</span>&#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useState(defaultValue);</span><br><span class="line">  <span class="keyword">const</span> addCount = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setCount(count + <span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">const</span> reduceCount = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    setCount(count - <span class="number">1</span>);</span><br><span class="line">  &#125;;</span><br><span class="line">  <span class="keyword">return</span> [</span><br><span class="line">    count,</span><br><span class="line">    &#123;</span><br><span class="line">      addCount, reduceCount</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> Reducer = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">const</span> [count, setCount] = useCount(<span class="number">0</span>);</span><br><span class="line">  <span class="keyword">return</span> (</span><br><span class="line">    <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span>count: &#123;count&#125;<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount.addCount()&#125;&gt;+<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">&#123;()</span> =&gt;</span> setCount.reduceCount()&#125;&gt;-<span class="tag">&lt;/<span class="name">button</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> Reducer;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://react.docschina.org/docs/hooks-intro.html">官方文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/92211533">React Hooks完全上手指南</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hooks/" rel="tag"># Hooks</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/react-redux-action/" rel="prev" title="redux-action">
+      <i class="fa fa-chevron-left"></i> redux-action
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/react-mobx/" rel="next" title="MobX">
+      MobX <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-Hook"><span class="nav-number">1.</span> <span class="nav-text">为什么使用 Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#State-Hooks"><span class="nav-number">2.</span> <span class="nav-text">State Hooks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Effect-Hook"><span class="nav-number">3.</span> <span class="nav-text">Effect Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#useContext"><span class="nav-number">4.</span> <span class="nav-text">useContext</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#useMemo"><span class="nav-number">5.</span> <span class="nav-text">useMemo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#useCallback"><span class="nav-number">6.</span> <span class="nav-text">useCallback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#memo"><span class="nav-number">7.</span> <span class="nav-text">memo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#useReducer"><span class="nav-number">8.</span> <span class="nav-text">useReducer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#immer"><span class="nav-number">8.1.</span> <span class="nav-text">immer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#use-immer"><span class="nav-number">8.2.</span> <span class="nav-text">use-immer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89Hook"><span class="nav-number">9.</span> <span class="nav-text">自定义Hook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

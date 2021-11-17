@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一个非常流行的基于 Node 平台的 web 开发框架，优点便是不内置无用的依赖，但是扩展性却极其强，以及其特有的中间价执行机制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Koa2">
+<meta property="og:url" content="https://bipch.cn/koa2/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="一个非常流行的基于 Node 平台的 web 开发框架，优点便是不内置无用的依赖，但是扩展性却极其强，以及其特有的中间价执行机制。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.bplink66.com/2021/11/05/25wfvgb75gu.png">
+<meta property="og:image" content="https://img.bplink66.com/2021/11/05/srmt3l49ws.png">
+<meta property="og:image" content="https://img.bplink66.com/2021/11/05/1rbtou7lr9k.png">
+<meta property="article:published_time" content="2021-01-16T17:50:47.000Z">
+<meta property="article:modified_time" content="2021-11-10T00:28:06.092Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Koa2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.bplink66.com/2021/11/05/25wfvgb75gu.png">
+
+<link rel="canonical" href="https://bipch.cn/koa2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Koa2 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/koa2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Koa2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-17 01:50:47" itemprop="dateCreated datePublished" datetime="2021-01-17T01:50:47+08:00">2021-01-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-10 08:28:06" itemprop="dateModified" datetime="2021-11-10T08:28:06+08:00">2021-11-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Node/" itemprop="url" rel="index"><span itemprop="name">Node</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一个非常流行的基于 Node 平台的 web 开发框架，优点便是不内置无用的依赖，但是扩展性却极其强，以及其特有的中间价执行机制。</p>
+<span id="more"></span>
+
+<h2 id="koa2-和-express-的区别"><a href="#koa2-和-express-的区别" class="headerlink" title="koa2 和 express 的区别"></a>koa2 和 express 的区别</h2><p>虽然 koa2 和 express 作用是相同的，并且都是原班人马打造的，但是两者使用的区别还是很大的。</p>
+<ol>
+<li><code>集成度</code>：koa2 是一个非常轻量级的开发框架，里面并没有继承太多的插件，例如实现 Router 还需要安装<code>koa-router</code>、加载文件需要<code>koa-static</code>，而 express 内置了大量的插件，包括router、文件等插件都进行了内置。</li>
+<li><code>社区活跃度</code>：由于 express 是一款比较成熟的框架，其上手难度是比较小的，并且其社区活跃度远高于 koa2，截至到书写本篇文章，其社区活跃差距可以看出还是很大的。</li>
+<li><code>中间件</code>：express 的中间件是一款典型的线性模型，也就是自上而下依次去执行，而 koa 中间件是洋葱模型。</li>
+</ol>
+<h2 id="洋葱模型"><a href="#洋葱模型" class="headerlink" title="洋葱模型"></a>洋葱模型</h2><p>关于 koa 中间件有一个很形象的图片：</p>
+<p><img data-src="https://img.bplink66.com/2021/11/05/25wfvgb75gu.png" alt=""></p>
+<p>中间价从最外层依次开始执行，但当执行到 <code>next</code> 便会执行下一个中间件，执行完成后会反方向继续执行 <code>next</code> 之后代码。<br>例如我们可以方便的添加日志，记录每个接口的请求信息与时间：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line"></span><br><span class="line"><span class="comment">// logger</span></span><br><span class="line">app.use(<span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;第一层 - 开始&#x27;</span>);</span><br><span class="line">  <span class="keyword">const</span> start = <span class="built_in">Date</span>.now();</span><br><span class="line">  <span class="keyword">await</span> next();</span><br><span class="line">  <span class="keyword">const</span> ms = <span class="built_in">Date</span>.now() - start;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">`<span class="subst">$&#123;ctx.method&#125;</span> ----------- <span class="subst">$&#123;ctx.url&#125;</span> ----------- <span class="subst">$&#123;ms&#125;</span>ms`</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;第一层 - 结束&#x27;</span>)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// response</span></span><br><span class="line">app.use(<span class="keyword">async</span> ctx =&gt; &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;第二层 - 开始&#x27;</span>)</span><br><span class="line">  ctx.body = <span class="string">&#x27;Hello World&#x27;</span>;</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">&#x27;第二层 - 结束&#x27;</span>)</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+<p>这样便通过第一个中间件打印日志信息，当执行到 <code>next</code> 方法时，会执行下一个中间件直到结束碰到 <code>ctx.body</code>，然后进行出栈操作。所以上面代码执行后打印出下面信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第一层 - 开始</span><br><span class="line">第二层 - 开始</span><br><span class="line">第二层 - 结束</span><br><span class="line">打印第一次执行的结果： GET -------- / ------ 6ms</span><br><span class="line">第一层 - 结束</span><br></pre></td></tr></table></figure>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><h3 id="原生路由"><a href="#原生路由" class="headerlink" title="原生路由"></a>原生路由</h3><p>koa2 的原生路由主要依靠 <code>use</code> 方法：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa()</span><br><span class="line"></span><br><span class="line">app.use(<span class="function">(<span class="params"> ctx </span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> url = ctx.request.url</span><br><span class="line">  ctx.body = url</span><br><span class="line">&#125;)</span><br><span class="line">app.listen(<span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+<p>这样我们访问 <a target="_blank" rel="noopener" href="http://localhost:3000/hello/world">http://localhost:3000/hello/world</a> 最终界面显示为 hello/world，这样就可以得知 ctx.request.url 对于的就是我们访问路径的名称，这样我们就可以在函数中使用正则表达式或者判断定制出所需要的路由。</p>
+<h3 id="koa-router中间件"><a href="#koa-router中间件" class="headerlink" title="koa-router中间件"></a>koa-router中间件</h3><p>由于上述通过判断方法定制路由，不仅会显得代码会非常多，并且会显得项目不够智能。那么除了上述方法，使用中间件去实现路由也是一个不错的选择，而比较好用的路由中间件便是 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/koa-router">koa-router</a> 了。<br>执行下面命令安装：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yarn <span class="builtin-name">add</span> koa-router</span><br></pre></td></tr></table></figure>
+<p>安装完成后，直接在首页注册中间件即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> Router = <span class="built_in">require</span>(<span class="string">&#x27;koa-router&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line"><span class="keyword">const</span> router = <span class="keyword">new</span> Router();</span><br><span class="line"></span><br><span class="line">router.get(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">async</span> (ctx, next) =&gt; &#123;</span><br><span class="line">  ctx.body = <span class="string">&#x27;&lt;h1&gt;Hello Index&lt;/h1&gt;&#x27;</span>;</span><br><span class="line">  <span class="keyword">await</span> next();</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">app</span><br><span class="line">  .use(router.routes())</span><br><span class="line">  .use(router.allowedMethods());</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+<p>这样访问 <a target="_blank" rel="noopener" href="http://localhost:3000">http://localhost:3000</a> 即可看到返回的 Hello Index 标题。</p>
+<h2 id="参数获取"><a href="#参数获取" class="headerlink" title="参数获取"></a>参数获取</h2><h3 id="原生获取"><a href="#原生获取" class="headerlink" title="原生获取"></a>原生获取</h3><h4 id="get"><a href="#get" class="headerlink" title="get"></a>get</h4><p>koa 中，GET 请求所有的参数都包含着 query 或者 querystring 中，区别就是 query 包含着格式化好的数据，而 querystring 数据为字符串。并且在 koa 中我们也可以使用 ctx 上下文对象中的 request 对象获取参数。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line"></span><br><span class="line">app.use( <span class="keyword">async</span> ( ctx ) =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> url = ctx.url</span><br><span class="line">  <span class="comment">// 从上下文的request对象中获取</span></span><br><span class="line">  <span class="keyword">let</span> request = ctx.request</span><br><span class="line">  <span class="keyword">let</span> req_query = request.query</span><br><span class="line">  <span class="keyword">let</span> req_querystring = request.querystring</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 从上下文中直接获取</span></span><br><span class="line">  <span class="keyword">let</span> ctx_query = ctx.query</span><br><span class="line">  <span class="keyword">let</span> ctx_querystring = ctx.querystring</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.group(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(req_query);</span><br><span class="line">  <span class="built_in">console</span>.log(req_querystring);</span><br><span class="line">  <span class="built_in">console</span>.groupEnd(<span class="string">&#x27;request&#x27;</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">console</span>.group(<span class="string">&#x27;ctx&#x27;</span>);</span><br><span class="line">  <span class="built_in">console</span>.log(ctx_query);</span><br><span class="line">  <span class="built_in">console</span>.log(ctx_querystring);</span><br><span class="line">  <span class="built_in">console</span>.groupEnd(<span class="string">&#x27;ctx&#x27;</span>);</span><br><span class="line"></span><br><span class="line">  ctx.body = <span class="string">&#x27;0k&#x27;</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.listen(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+<p>这样通过软件访问 <a target="_blank" rel="noopener" href="http://localhost:8888/user?a=1&amp;b=2：">http://localhost:8888/user?a=1&amp;b=2：</a></p>
+<p><img data-src="https://img.bplink66.com/2021/11/05/srmt3l49ws.png" alt=""></p>
+<h4 id="post"><a href="#post" class="headerlink" title="post"></a>post</h4><p>由于 koa 中并没有直接获取 post 数据的方法，但是我们可以借助对 ctx 中的 req 对象的监听，进行数据收集，之后进行拼接：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">parsePostData</span>(<span class="params"> ctx </span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      <span class="keyword">let</span> params = <span class="string">&quot;&quot;</span>;</span><br><span class="line">      ctx.req.addListener(<span class="string">&#x27;data&#x27;</span>, <span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">        params += data</span><br><span class="line">      &#125;)</span><br><span class="line">      ctx.req.addListener(<span class="string">&quot;end&quot;</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        resolve( params )</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125; <span class="keyword">catch</span> ( err ) &#123;</span><br><span class="line">      reject(err)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过这种方式可以获取到 post 传递过来的参数，但其非常有限，其也无法区分前端传递过来的数据类型，只是对前端传递的数据进行拼接，最终拼接为一个字符串。</p>
+<h3 id="koa-bodyparser"><a href="#koa-bodyparser" class="headerlink" title="koa-bodyparser"></a>koa-bodyparser</h3><p>上面虽然对 POST 请求进行了处理，但其非常有限，这时我们便需要 <a target="_blank" rel="noopener" href="https://www.npmjs.com/package/koa-bodyparser">koa-bodyparser</a> 中间件，其可以把 POST 请求中的 formData 数据解析到 ctx.request.body 中。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Koa = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">&#x27;koa-bodyparser&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> Koa();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册中间件</span></span><br><span class="line">app.use(bodyParser())</span><br><span class="line"></span><br><span class="line">app.use(<span class="keyword">async</span> ( ctx ) =&gt; &#123;</span><br><span class="line">  <span class="keyword">let</span> postData = ctx.request.body</span><br><span class="line"></span><br><span class="line">  ctx.body = &#123;</span><br><span class="line">    <span class="attr">data</span>: postData</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这样通过软件访问 <a target="_blank" rel="noopener" href="http://localhost:8888/user">http://localhost:8888/user</a> 并通过 POST 方式传入测试 JSON 数据：</p>
+<p><img data-src="https://img.bplink66.com/2021/11/05/1rbtou7lr9k.png" alt="koa-bodyparser"></p>
+<p>可以看出接口返回了正确的数据。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Koa2/" rel="tag"># Koa2</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/vue-set/" rel="prev" title="Vue $set">
+      <i class="fa fa-chevron-left"></i> Vue $set
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/error-first/" rel="next" title="Error-first">
+      Error-first <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#koa2-%E5%92%8C-express-%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">koa2 和 express 的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B4%8B%E8%91%B1%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">洋葱模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">3.</span> <span class="nav-text">路由</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%94%9F%E8%B7%AF%E7%94%B1"><span class="nav-number">3.1.</span> <span class="nav-text">原生路由</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#koa-router%E4%B8%AD%E9%97%B4%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">koa-router中间件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%8E%B7%E5%8F%96"><span class="nav-number">4.</span> <span class="nav-text">参数获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%94%9F%E8%8E%B7%E5%8F%96"><span class="nav-number">4.1.</span> <span class="nav-text">原生获取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">4.1.1.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#post"><span class="nav-number">4.1.2.</span> <span class="nav-text">post</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#koa-bodyparser"><span class="nav-number">4.2.</span> <span class="nav-text">koa-bodyparser</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

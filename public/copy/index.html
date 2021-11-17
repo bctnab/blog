@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="了解拷贝之前，必须先搞清楚 赋值 和 拷贝 的区别，它们是不会相同的。赋值 只能算是”引用”，其引用的任然是同一对象，不能算是真正的拷贝，因为 拷贝 是重新创建了新的对象，所以赋值和拷贝本质还是有区别的。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拷贝">
+<meta property="og:url" content="https://bipch.cn/copy/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="了解拷贝之前，必须先搞清楚 赋值 和 拷贝 的区别，它们是不会相同的。赋值 只能算是”引用”，其引用的任然是同一对象，不能算是真正的拷贝，因为 拷贝 是重新创建了新的对象，所以赋值和拷贝本质还是有区别的。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-02T03:48:10.000Z">
+<meta property="article:modified_time" content="2021-11-10T02:33:00.770Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="拷贝">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/copy/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>拷贝 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/copy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          拷贝
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-02 11:48:10" itemprop="dateCreated datePublished" datetime="2020-11-02T11:48:10+08:00">2020-11-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-10 10:33:00" itemprop="dateModified" datetime="2021-11-10T10:33:00+08:00">2021-11-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>了解拷贝之前，必须先搞清楚 <strong>赋值</strong> 和 <strong>拷贝</strong> 的区别，它们是不会相同的。<strong>赋值</strong> 只能算是”引用”，其引用的任然是同一对象，不能算是真正的拷贝，因为 <strong>拷贝</strong> 是重新创建了新的对象，所以赋值和拷贝本质还是有区别的。</p>
+<span id="more"></span>
+
+<h2 id="拷贝"><a href="#拷贝" class="headerlink" title="拷贝"></a>拷贝</h2><p>JS 中的拷贝可以分为 <code>浅拷贝</code> 和 <code>深拷贝</code>，它们的主要区别如下所示：</p>
+<ul>
+<li><strong>深拷贝</strong>：将 B 对象拷贝到 A 对象中，普通属性进行修改 不会 影响原数组，但是引用属性修改 会 影响原数组。</li>
+<li><strong>浅拷贝</strong>：将 B 对象拷贝到 A 对象中，普通属性进行修改 不会 影响原数组，但是引用属性修改 不会 影响原数组。</li>
+</ul>
+<p>所以结合上面的叙述，我们可以绘制出下面的表格：</p>
+<table>
+<thead>
+<tr>
+<th align="center">名称</th>
+<th align="center">和原数据是否指向同一对象</th>
+<th align="center">第一层数据为基本数据类型</th>
+<th align="center">原数据中包含子对象</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">=</td>
+<td align="center">是</td>
+<td align="center">改变会使原数据一同改变</td>
+<td align="center">改变会使原数据一同改变</td>
+</tr>
+<tr>
+<td align="center">浅拷贝</td>
+<td align="center">否</td>
+<td align="center">改变 <strong>不</strong> 会使原数据一同改变</td>
+<td align="center">改变会使原数据一同改变</td>
+</tr>
+<tr>
+<td align="center">深拷贝</td>
+<td align="center">否</td>
+<td align="center">改变 <strong>不</strong> 会使原数据一同改变</td>
+<td align="center">改变 <strong>不会</strong> 会使原数据一同改变</td>
+</tr>
+</tbody></table>
+<h2 id="浅拷贝与赋值"><a href="#浅拷贝与赋值" class="headerlink" title="浅拷贝与赋值"></a>浅拷贝与赋值</h2><p>我们要区分 <code>浅拷贝</code> 和 <code>赋值</code> 的区别，我们通过下面的方式进行比较：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj1 = &#123;</span><br><span class="line">  <span class="attr">name</span>: <span class="string">&#x27;zhangsan&#x27;</span>,</span><br><span class="line">  <span class="attr">age</span>: <span class="string">&#x27;18&#x27;</span>,</span><br><span class="line">  <span class="attr">language</span>: [</span><br><span class="line">    <span class="number">1</span>,</span><br><span class="line">    [<span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">    [<span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">  ],</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> obj2 = obj1;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">shallowCopy</span>(<span class="params">src</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> dst = &#123;&#125;;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> prop <span class="keyword">in</span> src) &#123;</span><br><span class="line">    <span class="keyword">if</span> (src.hasOwnProperty(prop)) &#123;</span><br><span class="line">      dst[prop] = src[prop];</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> dst;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> obj3 = shallowCopy(obj1);</span><br><span class="line"></span><br><span class="line">obj2.name = <span class="string">&quot;lisi&quot;</span>;</span><br><span class="line">obj3.age = <span class="string">&quot;20&quot;</span>;</span><br><span class="line">obj2.language[<span class="number">1</span>] = [<span class="string">&quot;二&quot;</span>, <span class="string">&quot;三&quot;</span>];</span><br><span class="line">obj3.language[<span class="number">2</span>] = [<span class="string">&quot;四&quot;</span>, <span class="string">&quot;五&quot;</span>];</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(obj1);</span><br><span class="line"><span class="comment">//obj1 = &#123;</span></span><br><span class="line"><span class="comment">//    &#x27;name&#x27; : &#x27;lisi&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;age&#x27; :  &#x27;18&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;language&#x27; : [1,[&quot;二&quot;,&quot;三&quot;],[&quot;四&quot;,&quot;五&quot;]],</span></span><br><span class="line"><span class="comment">//&#125;;</span></span><br><span class="line"><span class="built_in">console</span>.log(obj2);</span><br><span class="line"><span class="comment">//obj2 = &#123;</span></span><br><span class="line"><span class="comment">//    &#x27;name&#x27; : &#x27;lisi&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;age&#x27; :  &#x27;18&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;language&#x27; : [1,[&quot;二&quot;,&quot;三&quot;],[&quot;四&quot;,&quot;五&quot;]],</span></span><br><span class="line"><span class="comment">//&#125;;</span></span><br><span class="line"><span class="built_in">console</span>.log(obj3);</span><br><span class="line"><span class="comment">//obj3 = &#123;</span></span><br><span class="line"><span class="comment">//    &#x27;name&#x27; : &#x27;zhangsan&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;age&#x27; :  &#x27;20&#x27;,</span></span><br><span class="line"><span class="comment">//    &#x27;language&#x27; : [1,[&quot;二&quot;,&quot;三&quot;],[&quot;四&quot;,&quot;五&quot;]],</span></span><br><span class="line"><span class="comment">//&#125;;</span></span><br></pre></td></tr></table></figure>
+<p>代码很简单，首先定义一个原始对象 obj1，然后使用 <strong>赋值</strong> 得到第二个对象 obj2，然后通过 <strong>浅拷贝</strong> 对象 obj1 得到 obj3 对象。也就是说：</p>
+<ul>
+<li><strong>obj1</strong>：原始数据。</li>
+<li><strong>obj2</strong>：赋值操作得到。</li>
+<li><strong>obj3</strong>：浅拷贝得到。</li>
+</ul>
+<p>最后得出：我们在改变 <strong>obj2</strong> 和 <strong>obj3</strong> 的 <code>name</code> 属性，最后可以看出改变 <strong>obj2</strong> 会使 <strong>obj1</strong> 进行修改，而 <strong>obj3</strong> 不会修改。这就说明了 <strong>赋值只是复用引用地址</strong>，但引用还是同一对象，而 <strong>拷贝则是新创建了一个对象</strong>。而我们修改 <strong>obj2</strong> 和 <strong>obj3</strong> 的 <code>language</code> 属性时，最后是都会发生改变的，这是因为 浅拷贝 只是复制一层的对象属性，并不包括对象中的引用数据。所以修改引用类型的数据，原始数据也会进行修改。<br>从上面的实例很容易就能区分出 <strong>复制</strong> 和 <strong>浅拷贝</strong> 的真正区别。我们千万不能将 <strong>复制</strong> 直接当成 <strong>浅拷贝</strong> 进行理解。</p>
+<h2 id="深拷贝"><a href="#深拷贝" class="headerlink" title="深拷贝"></a>深拷贝</h2><p>因为前面讲了 <strong>浅拷贝</strong> 至于 <strong>深度拷贝</strong> 其实对对象的所有子对象都进行拷贝。那么怎么实现呢？<br>其实我们递归调用 <strong>浅拷贝</strong> 对象，把所有属于对象的属性类型都遍历赋给另一个对象即可。比如下面的代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">deepClone</span>(<span class="params">obj, newObj = &#123;&#125;</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (key <span class="keyword">in</span> obj) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> obj[key] === <span class="string">&#x27;object&#x27;</span>) &#123;</span><br><span class="line">      newObj[key] = (obj[key].constructor === <span class="built_in">Array</span>) ? [] : &#123;&#125;;</span><br><span class="line">      deepClone(obj[key], newObj[key]);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      newObj[key] = obj[key]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> newObj;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看出和 <strong>浅拷贝</strong> 非常的相似，只是遍历的时候判断如果是 <strong>对象类型</strong> 的数据，就递归继续拷贝，这样就避免 <strong>浅拷贝</strong> 子对象的问题。</p>
+<h2 id="JSON-stringify"><a href="#JSON-stringify" class="headerlink" title="JSON.stringify"></a>JSON.stringify</h2><p>可以将 JavaScript 中的对象转换为字符串，使用方式也非常简单：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.stringify(value[, replacer[, space]])</span><br></pre></td></tr></table></figure>
+<ol>
+<li><strong>value</strong>：需要转换的数据(可以为对象或数组)。</li>
+<li><strong>replacer</strong>(可选)：如果为函数，序列化会为每个属性进行处理；如果为数组，则只有数组中的属性名被序列化；null 表示不处理。</li>
+<li><strong>space</strong>(可选)：使用空白字符串填充，美化字符串。</li>
+</ol>
+<p>看着很好理解，比如这样：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  <span class="attr">fruits</span>: <span class="string">&quot;orange&quot;</span>,</span><br><span class="line">  <span class="attr">color</span>: <span class="string">&quot;oranges&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;&#123;&quot;fruits&quot;:&quot;orange&quot;,&quot;color&quot;:&quot;oranges&quot;&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> obj1 = <span class="built_in">JSON</span>.stringify(obj);</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;&#123;&quot;fruits&quot;:&quot;orange&quot;&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> obj2 = <span class="built_in">JSON</span>.stringify(obj, [<span class="string">&quot;fruits&quot;</span>]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;&#123;↵  &quot;fruits&quot;: &quot;orange&quot;,↵  &quot;color&quot;: &quot;oranges&quot;↵&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> obj3 = <span class="built_in">JSON</span>.stringify(obj, <span class="literal">null</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>使用很简单，那么它除了转换对象还有什么作用呢？由于其不会修改源数据，那么可以配合 <strong>JSON.parse</strong> 实现深拷贝，可以这么写：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  <span class="attr">fruits</span>: <span class="string">&quot;orange&quot;</span>,</span><br><span class="line">  <span class="attr">color</span>: <span class="string">&quot;oranges&quot;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> obj1 = <span class="built_in">JSON</span>.parse(<span class="built_in">JSON</span>.stringify(obj));</span><br></pre></td></tr></table></figure>
+<p>这样的深拷贝是正确的，但是我们将对象转字符串会造成一些属性的丢失吗？<br>答案是肯定会造成部分数据丢失的，比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> obj = &#123;</span><br><span class="line">  <span class="attr">fruits</span>: <span class="string">&quot;orange&quot;</span>,</span><br><span class="line">  <span class="attr">action</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&quot;我可以进行光合作用！&quot;</span>);</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">time</span>: <span class="keyword">new</span> <span class="built_in">Date</span>()</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// &quot;&#123;&quot;fruits&quot;:&quot;orange&quot;,&quot;time&quot;:&quot;2021-03-14T13:35:17.394Z&quot;&#125;&quot;</span></span><br><span class="line"><span class="keyword">let</span> obj1 = <span class="built_in">JSON</span>.stringify(obj);</span><br></pre></td></tr></table></figure>
+<p>可以看出一些属性丢失，并且一些属性值转换了，最后经过测试可以看出：</p>
+<ol>
+<li>undefined、任意的函数以及 symbol 值，在序列化过程中会被忽略。</li>
+<li>Date 类型自动调用转换 <code>toJSON()</code> 将其转换为字符串。</li>
+<li>NaN 和 Infinity 格式的数值及 null 都会被当做 null。</li>
+<li>对象之间相互引用，会形成无限循环，导致栈溢出，抛出错误。</li>
+</ol>
+<p>所以使用 <code>JSON.stringify</code> 是否可以实现深拷贝还是据情况而决定的。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8B%B7%E8%B4%9D/" rel="tag"># 拷贝</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/linux-software/" rel="prev" title="MongoDB安装">
+      <i class="fa fa-chevron-left"></i> MongoDB安装
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/event-loop/" rel="next" title="执行机制">
+      执行机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%B7%E8%B4%9D"><span class="nav-number">1.</span> <span class="nav-text">拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%85%E6%8B%B7%E8%B4%9D%E4%B8%8E%E8%B5%8B%E5%80%BC"><span class="nav-number">2.</span> <span class="nav-text">浅拷贝与赋值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E6%8B%B7%E8%B4%9D"><span class="nav-number">3.</span> <span class="nav-text">深拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON-stringify"><span class="nav-number">4.</span> <span class="nav-text">JSON.stringify</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

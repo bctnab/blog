@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="对于一个健全的项目来说界面之间的通信是比较关键的，但是由于 React 一直是单向数据流，所以其代码并不能书写大型应用。为了解决该问题 2014年 Facebook 提出了 Flux 架构，引发了许多的实现，2015 年 Redux 将 Flux 与函数编程结合在一起，很短时间内就成为了最热门的前端架构。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redux 入门">
+<meta property="og:url" content="https://bipch.cn/redux/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="对于一个健全的项目来说界面之间的通信是比较关键的，但是由于 React 一直是单向数据流，所以其代码并不能书写大型应用。为了解决该问题 2014年 Facebook 提出了 Flux 架构，引发了许多的实现，2015 年 Redux 将 Flux 与函数编程结合在一起，很短时间内就成为了最热门的前端架构。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.bplink66.com/2021/08/08/2lgi1wf3tu8.jpeg">
+<meta property="article:published_time" content="2020-01-28T04:57:53.000Z">
+<meta property="article:modified_time" content="2021-08-25T07:41:44.485Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Redux">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.bplink66.com/2021/08/08/2lgi1wf3tu8.jpeg">
+
+<link rel="canonical" href="https://bipch.cn/redux/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>redux 入门 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/redux/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          redux 入门
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-01-28 12:57:53" itemprop="dateCreated datePublished" datetime="2020-01-28T12:57:53+08:00">2020-01-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-25 15:41:44" itemprop="dateModified" datetime="2021-08-25T15:41:44+08:00">2021-08-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>对于一个健全的项目来说界面之间的通信是比较关键的，但是由于 React 一直是单向数据流，所以其代码并不能书写大型应用。为了解决该问题 2014年 Facebook 提出了 Flux 架构，引发了许多的实现，2015 年 Redux 将 Flux 与函数编程结合在一起，很短时间内就成为了最热门的前端架构。</p>
+<span id="more"></span>
+
+<h2 id="什么是Redux"><a href="#什么是Redux" class="headerlink" title="什么是Redux"></a>什么是Redux</h2><p>这一点官网说的很清楚，Redux 是为 JavaScript 应用程序的提供一个可预测的状态容器。其是将 Flux 与函数编程结合在一起的一种混合产物，并且遵循了 Flux 提出的 <strong>严格按照单向数据流</strong> 设计理念。<br>在Flux架构中数据流如下所示：</p>
+<p><img data-src="https://cdn.bplink66.com/2021/08/08/2lgi1wf3tu8.jpeg" alt="Flux流程"></p>
+<p>Flux 由 4 个模块组成：<strong>Store</strong> 为项目的数据源，一旦里面的数据改变会立即通知订阅数据的 View 进行数据更新。<strong>Action</strong> 用于描述需要对 Store 进行的操作，是修改 Store 数据的唯一入口。<strong>Dispatcher</strong> 为一个分发器，其会把指定 Action 分发给指定的 Store，而后在 Store 进行数据更新。<strong>View</strong> 表示前端界面可以订阅 Store 中的数据进行展示，一旦需要修改 Store 便可以触发指定 Action 用于修改数据。</p>
+<p>可以总结出：<strong>Flux 将所有逻辑都集中于 Store 层，并不允许其他地方修改数据，而是用一个 “action” 的对象来对更改进行描述。</strong>而 Redux 工作的特征和其极为相似但也有很多不同，文章结尾可以对比下两个框架。</p>
+<h2 id="你可能不需要-Redux"><a href="#你可能不需要-Redux" class="headerlink" title="你可能不需要 Redux"></a>你可能不需要 Redux</h2><p>Redux 和 React 结合的确很好，但如果组件间没有需要共享的数据，那么其就是不必要的，用了反而增加复杂性。总而言之其是一个状态管理工具，如果不按照一定规律处理状态的读写，代码很快就会变成一团乱麻。你需要一种机制，可以在同一个地方查询状态、改变状态、传播状态的变化。这便是 Redux 最大的作用。</p>
+<h2 id="三大原则"><a href="#三大原则" class="headerlink" title="三大原则"></a>三大原则</h2><p>Redux 使用必须遵循这三个基本原则：</p>
+<ol>
+<li><strong>单一数据源</strong>：整个项目有且只有一个 Store。</li>
+<li><strong>Store 是只读的</strong>：唯一改变 Store 的方法就是触发 action，action 是用来描述发生事件的普通对象。</li>
+<li><strong>使用纯函数进行修改</strong>：Reducer 根据 action 返回新的 state，最终合并为新的 Store。而 Reducer 必须是一个纯函数。</li>
+</ol>
+<h2 id="核心API"><a href="#核心API" class="headerlink" title="核心API"></a>核心API</h2><h3 id="Action"><a href="#Action" class="headerlink" title="Action"></a>Action</h3><p>action 的主要目的就是把信息从视图层传递到数据层，同样也是 store 数据的<strong>唯一</strong>来源，一般来说都是通过 <code>store.dispatch()</code> 进行发送。</p>
+<p>其只是一个普通 JS 对象，不需要有太多神秘感，常规定义如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> ADD_TODO = <span class="string">&#x27;ADD_TODO&#x27;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">type</span>: ADD_TODO,</span><br><span class="line">  <span class="attr">text</span>: <span class="string">&#x27;Consider using Redux&#x27;</span>,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本质就是一个普通对象，可以约定 <code>type</code> 作为需要执行的动作，常规情况下可以直接使用字符串，但规模较大时建议使用单独的模块或文件来存放 action。而除了 type 字段，其余结构完全可以用户自己定义。<br>我们经常把 <strong>“action”</strong> 和 <strong>“Action Creator”</strong> 这两个概念很容易混在一起，其实 Action Creator 是生成 action 的方法，使用时最好注意区分。<br>比如这就是一个 Action Creator：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addTodo</span>(<span class="params">text</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">type</span>: ADD_TODO,</span><br><span class="line">    text</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Reducer"><a href="#Reducer" class="headerlink" title="Reducer"></a>Reducer</h3><p>reducer 指定了应用状态如何变化响应 actions 并发送到 store。但是 reducer 只能将处理完成的 state 返回给 store 不能直接更新数据。<br>Redux 中所有的 state 都被保存在一个 reducer 中，建议先构思如何才能以最简的形式把应用的 state 用对象描述出来，一般 state 中都存储一些和 UI 相关的数据，例如 TODO List demo 中我们可以这样定义数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">visibilityFilter</span>: <span class="string">&#x27;SHOW_ALL&#x27;</span>,</span><br><span class="line">  <span class="attr">todos</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">text</span>: <span class="string">&#x27;Consider using Redux&#x27;</span>,</span><br><span class="line">      <span class="attr">completed</span>: <span class="literal">true</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而 reducer 最重要的便是 action 的处理了，上面有过定义 reducer 必须是一个纯函数，其接收旧的 state 和 action，返回新的 state。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(previousState, action) =&gt; newState</span><br></pre></td></tr></table></figure>
+<p>换句话说就是<strong>只要传入参数相同，返回计算得到的下一个 state 就一定相同。没有特殊情况、没有副作用，没有 API 请求、没有变量修改，单纯执行计算。</strong><br>明白上面的基础定义，就可以进行 actions 处理了，当其接收到一个 action 时会根据不同的 type 执行不同逻辑：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> initialState = &#123;</span><br><span class="line">  <span class="attr">visibilityFilter</span>: <span class="string">&#x27;SHOW_ALL&#x27;</span>,</span><br><span class="line">  <span class="attr">todos</span>: []</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">todoApp</span>(<span class="params">state = initialState, action</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">switch</span> (action.type) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&#x27;ADD_TODO&#x27;</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Object</span>.assign(&#123;&#125;, state, &#123;</span><br><span class="line">        <span class="attr">todos</span>: [</span><br><span class="line">          ...state.todos,</span><br><span class="line">          &#123;</span><br><span class="line">            <span class="attr">text</span>: action.text,</span><br><span class="line">            <span class="attr">completed</span>: <span class="literal">false</span></span><br><span class="line">          &#125;</span><br><span class="line">        ]</span><br><span class="line">      &#125;)</span><br><span class="line">    <span class="attr">default</span>:</span><br><span class="line">      <span class="keyword">return</span> state</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Store"><a href="#Store" class="headerlink" title="Store"></a>Store</h3><p>前面说了 action 用于描述 “程序发生了什么”，reducers 能根据 actions 更新 state。而 <strong>Store</strong> 的存在就是把它们连接在一起，Store 有下面的责任：</p>
+<ol>
+<li>维护整个项目的数据源。</li>
+<li>提供获取(getState)、更新数据(dispatch)的方法。</li>
+<li>注册、注销数据的监听器(subscribe)。</li>
+</ol>
+<p>有一点必须注意，<strong>整个项目有且只能有一个Store</strong>，但是我们可以使用 <code>combineReducers</code> 拆取 Store:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;combineReducers&#125; <span class="keyword">from</span> <span class="string">&#x27;redux&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> todo <span class="keyword">from</span> <span class="string">&#x27;./todo&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> combineReducers(&#123;</span><br><span class="line">  todo</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>这对开发同构应用时非常有用。</p>
+<h2 id="与-React"><a href="#与-React" class="headerlink" title="与 React"></a>与 React</h2><p>其和 React 配合使用之前必须明白，这两个之间没有任何关系，Redux 是为 JavaScript 提供的可预测状态管理容器，这就意味着其不仅可以与 React 结合、还能与 jQuery、 Angular等框架结合。<br>但是由于 React 和 Redux 不仅设计模式相似，甚至大小也仅有2kB，，并且拥有很强大的插件扩展生态，这使得它们两个搭配使用可以获得绝妙的效果。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redux/" rel="tag"># Redux</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/react-context/" rel="prev" title="React Context">
+      <i class="fa fa-chevron-left"></i> React Context
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/react-redux-action/" rel="next" title="redux-action">
+      redux-action <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFRedux"><span class="nav-number">1.</span> <span class="nav-text">什么是Redux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%A0%E5%8F%AF%E8%83%BD%E4%B8%8D%E9%9C%80%E8%A6%81-Redux"><span class="nav-number">2.</span> <span class="nav-text">你可能不需要 Redux</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">三大原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83API"><span class="nav-number">4.</span> <span class="nav-text">核心API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Action"><span class="nav-number">4.1.</span> <span class="nav-text">Action</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reducer"><span class="nav-number">4.2.</span> <span class="nav-text">Reducer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Store"><span class="nav-number">4.3.</span> <span class="nav-text">Store</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8E-React"><span class="nav-number">5.</span> <span class="nav-text">与 React</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="因为自己需要空闲的时候总结一些个人项目等，之前通过 hexo 搭建的博客，但是接触了 koa2 决定使其搭建一个后台接口服务，为前端界面提供相应数据。本篇主要讲解客户端一键将 koa2 项目部署到服务器，服务器端使用 pm2 管理 koa2 服务及 Nginx 反向代理服务到另一个接口。首先网站大致为：koa2 默认占用本地 6060 端口，然后通过 nginx 反向代理到 80 端口，同时 ng">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pm2 + Nginx 部署 Koa2">
+<meta property="og:url" content="https://bipch.cn/pm2-nginx/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="因为自己需要空闲的时候总结一些个人项目等，之前通过 hexo 搭建的博客，但是接触了 koa2 决定使其搭建一个后台接口服务，为前端界面提供相应数据。本篇主要讲解客户端一键将 koa2 项目部署到服务器，服务器端使用 pm2 管理 koa2 服务及 Nginx 反向代理服务到另一个接口。首先网站大致为：koa2 默认占用本地 6060 端口，然后通过 nginx 反向代理到 80 端口，同时 ng">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.bplink66.com/2021/08/25/1m0epegcjh3.png">
+<meta property="article:published_time" content="2021-01-30T18:10:03.000Z">
+<meta property="article:modified_time" content="2021-08-25T08:11:53.013Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="pm2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.bplink66.com/2021/08/25/1m0epegcjh3.png">
+
+<link rel="canonical" href="https://bipch.cn/pm2-nginx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>pm2 + Nginx 部署 Koa2 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/pm2-nginx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pm2 + Nginx 部署 Koa2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-31 02:10:03" itemprop="dateCreated datePublished" datetime="2021-01-31T02:10:03+08:00">2021-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-25 16:11:53" itemprop="dateModified" datetime="2021-08-25T16:11:53+08:00">2021-08-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%A1%B9%E7%9B%AE%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">项目部署</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>因为自己需要空闲的时候总结一些个人项目等，之前通过 <a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/">hexo</a> 搭建的博客，但是接触了 koa2 决定使其搭建一个后台接口服务，为前端界面提供相应数据。<br>本篇主要讲解客户端一键将 koa2 项目部署到服务器，服务器端使用 pm2 管理 koa2 服务及 Nginx 反向代理服务到另一个接口。<br>首先网站大致为：koa2 默认占用本地 <code>6060</code> 端口，然后通过 nginx 反向代理到 <code>80</code> 端口，同时 nginx 将 <code>80</code> 端口转发到 <code>443</code> 强制使用 https 协议。</p>
+<span id="more"></span>
+
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>本人服务器系统为 <code>CentOS7.0</code>，系统不同执行的命令也会有些许差别。部署之前要安装必备的软件：<code>Node</code>、<code>npm</code>、<code>pm2</code>、<code>Nginx</code>、<code>MongoDB</code>。安装的方法这里就不多说了，方式有太多。<br><strong>下面的配置都是为了服务器安全，如果不需要可以不用配置。后面用户直接设置为 root 即可</strong>。</p>
+<h3 id="创建新用户-可选"><a href="#创建新用户-可选" class="headerlink" title="创建新用户(可选)"></a>创建新用户(可选)</h3><p>为了服务器的安全起见，不推荐用 root 用户管理所有权限，只有需要 root 权限时，在使用 <code>su</code> 命令切换为 root 用户。<br>首先创建一个新用户进行管理：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">useradd lucifer</span></span><br></pre></td></tr></table></figure>
+<p>对新用户初始化密码：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">passwd lucifer</span></span><br></pre></td></tr></table></figure>
+<p>将该用户添加到 <code>wheel</code> 组中，设置为管理员用户：</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">usermod -aG wheel lucifer</span></span><br></pre></td></tr></table></figure>
+<h3 id="文件读写权限-可选"><a href="#文件读写权限-可选" class="headerlink" title="文件读写权限(可选)"></a>文件读写权限(可选)</h3><p>因为我们自定义了用户进行管理，其并不会向 root 一样有着所有文件的读写权限，我们需要对指定路径设置新用户的访问权限。<br>比如我在服务器中将最终代码放置在 <strong>/var/api/blog</strong> 路径下，那么我们通过下面方式分配权限：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chown -R lucifer <span class="regexp">/var/</span>api</span><br><span class="line">chmod -R <span class="number">755</span> <span class="regexp">/var/</span>api</span><br></pre></td></tr></table></figure>
+<p>使用 <code>chown</code> 命令分配指定用户权限，使用 <code>chmod</code> 分配给文件夹详细权限(755表示拥有者有读、写、执行权限；而属组用户和其他用户只有读、执行权限)。</p>
+<h2 id="SSH-上传代码"><a href="#SSH-上传代码" class="headerlink" title="SSH 上传代码"></a>SSH 上传代码</h2><p>客户和服务器端同步代码需要建立一个 github 的私人仓库，我的命名为 react_blog_api。</p>
+<h3 id="设置密钥"><a href="#设置密钥" class="headerlink" title="设置密钥"></a>设置密钥</h3><p>由于需要使用 ssh 读写私人仓库内容，所以需要配置私人仓库中的 <strong>Deploy keys</strong>。这就需要我们在客户端和服务器端生成 <code>id_rsa.pub</code>(默认名称)文件，并查询其内容：<br>首先我们查看是否已经生成该文件：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ~<span class="regexp">/.ssh/i</span>d_rsa.pub  <span class="comment"># cat 命令查看文件</span></span><br></pre></td></tr></table></figure>
+<p>当然如果 <code>cat</code> 命令没有查找文件，那么可以使用下面命令生成：</p>
+<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -<span class="built_in">t</span> rsa -C <span class="string">&quot;你的个人邮箱&quot;</span></span><br></pre></td></tr></table></figure>
+<p>复制成功后，将内容粘贴到 github 中的 SSH keys 中：<br><img data-src="https://cdn.bplink66.com/2021/08/25/1m0epegcjh3.png" alt=""></p>
+<h3 id="提交代码"><a href="#提交代码" class="headerlink" title="提交代码"></a>提交代码</h3><p>私人仓库配置完成后，我们便有权限操作私人仓库了，我们将客户端代码传入到仓库中：</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">git</span> init</span><br><span class="line"><span class="symbol">git</span> remote <span class="keyword">add</span> origin https:<span class="comment">//github.com/bpc99/blog_api.git</span></span><br><span class="line"><span class="symbol">git</span> <span class="keyword">add</span> .</span><br><span class="line"><span class="symbol">git</span> commit -m <span class="string">&quot;项目初始化&quot;</span></span><br><span class="line"><span class="symbol">git</span> <span class="keyword">push</span> -u origin master</span><br></pre></td></tr></table></figure>
+<p>这样便将客户端代码提交至 Github 私人仓库。</p>
+<h2 id="pm2-配置"><a href="#pm2-配置" class="headerlink" title="pm2 配置"></a>pm2 配置</h2><p>使用 pm2 可以使 node 程序永远保持活动状态，无需停机便可以重新加载它们，并简化常见的任务管理。并且其还为我们提供了 deploy 配置，可以让我们在本地一键将项目部署到服务端。</p>
+<h3 id="同步代码"><a href="#同步代码" class="headerlink" title="同步代码"></a>同步代码</h3><p>关于 pm2 的基本操作和配置这里就不介绍了，具体可以查看其 <a target="_blank" rel="noopener" href="https://github.com/Unitech/pm2">官方文档</a>，当 koa2 本地运行无误时，我们需要配置 pm2 中的 <code>deploy</code>属性，其默认的模板文件为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">apps</span> : [...],</span><br><span class="line">  <span class="attr">deploy</span> : &#123;</span><br><span class="line">    <span class="attr">production</span> : &#123;</span><br><span class="line">      <span class="attr">user</span> : <span class="string">&quot;node&quot;</span>,</span><br><span class="line">      <span class="attr">host</span> : <span class="string">&quot;47.110.125.228&quot;</span>,</span><br><span class="line">      <span class="attr">ref</span>  : <span class="string">&quot;origin/master&quot;</span>,</span><br><span class="line">      <span class="attr">repo</span> : <span class="string">&quot;git@github.com:repo.git&quot;</span>,</span><br><span class="line">      <span class="attr">path</span> : <span class="string">&quot;/var/www/production&quot;</span>,</span><br><span class="line">      <span class="string">&quot;post-deploy&quot;</span> : <span class="string">&quot;npm install &amp;&amp; pm2 startOrRestart ecosystem.config.js --env production&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一些基础的配置，其各个属性也都很简单：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;production&quot;</span>: &#123;</span><br><span class="line">  <span class="attr">&quot;user&quot;</span>: <span class="string">&quot;登录远程服务器的用户名(例如 root)&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;host&quot;</span>: <span class="string">&quot;IP&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;ref&quot;</span>: <span class="string">&quot;远端名称及分支名&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;repo&quot;</span>: <span class="string">&quot;git仓库地址&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;path&quot;</span>: <span class="string">&quot;远程服务器部署目录，需要填写user具备写入权限的目录&quot;</span>,</span><br><span class="line">  <span class="attr">&quot;post-deploy&quot;</span> : <span class="string">&quot;部署后需要执行的命令&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们根据自己服务器的信息填入即可，最后贴出本人的配置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">apps</span> : [...],</span><br><span class="line">  <span class="attr">production</span>: &#123;</span><br><span class="line">    <span class="attr">user</span>: <span class="string">&quot;bpc&quot;</span>,</span><br><span class="line">    <span class="attr">host</span>: <span class="string">&quot;47.110.125.228&quot;</span>,</span><br><span class="line">    <span class="attr">ref</span>: <span class="string">&quot;origin/master&quot;</span>,</span><br><span class="line">    <span class="attr">repo</span>: <span class="string">&quot;git@github.com:bpc99/blog_api.git&quot;</span>,</span><br><span class="line">    <span class="attr">path</span>: <span class="string">&quot;/var/api/blog&quot;</span>,</span><br><span class="line">    <span class="string">&quot;post-deploy&quot;</span>: <span class="string">&quot;npm install &amp;&amp; pm2 startOrRestart ecosystem.config.js --env production&quot;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样便完成了 pm2 的基本配置，贴出 <code>ecosystem.config.js</code> 所有配置：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">  <span class="attr">apps</span>: [&#123;</span><br><span class="line">    <span class="attr">name</span>: <span class="string">&#x27;api&#x27;</span>,</span><br><span class="line">    <span class="attr">script</span>: <span class="string">&#x27;./src/index.js&#x27;</span>,</span><br><span class="line">    <span class="attr">watch</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">ignore_watch</span>: [ <span class="string">&quot;node_modules&quot;</span> ]</span><br><span class="line">  &#125;],</span><br><span class="line">  <span class="attr">deploy</span>: &#123;</span><br><span class="line">    <span class="attr">production</span>: &#123;</span><br><span class="line">      <span class="attr">user</span>: <span class="string">&quot;bpc&quot;</span>,</span><br><span class="line">      <span class="attr">host</span>: <span class="string">&quot;47.110.125.228&quot;</span>,</span><br><span class="line">      <span class="attr">ref</span>: <span class="string">&quot;origin/master&quot;</span>,</span><br><span class="line">      <span class="attr">repo</span>: <span class="string">&quot;git@github.com:bpc99/blog_api.git&quot;</span>,</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&quot;/var/api/blog&quot;</span>,</span><br><span class="line">      <span class="string">&quot;post-deploy&quot;</span>: <span class="string">&quot;npm install &amp;&amp; pm2 startOrRestart ecosystem.config.js --env production&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>最后我们在根目录下，以 <code>ecosystem.config.js</code> 为配置文件，启动 pm2：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pm2 deploy ecosystem.config.js production setup</span><br></pre></td></tr></table></figure>
+<p>此时会出现一个错误：</p>
+<blockquote>
+<p>Host key verification failed.<br>fatal: Could not read from remote repository.</p>
+</blockquote>
+<p>主要是因为在远程服务器中，并未将 <a target="_blank" rel="noopener" href="https://github.com">github.com</a> 加入known_hosts，在服务器端通过如下命令设置：</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keyscan -t rsa github.com &gt;&gt; ~<span class="regexp">/.ssh/</span>known_hosts</span><br></pre></td></tr></table></figure>
+<p>如果成功，会在<strong>/home/用户名/.ssh</strong>目录下生成<code>known_hosts</code>文件。然后客户端重新执行部署的指令：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pm2 deploy ecosystem.config.js production setup</span><br></pre></td></tr></table></figure>
+<p>如果传输成功 pm2 便将 GitHub 私人仓库中的文件，都传输到了我们服务器指定路径下，我们打开指定文件夹，发现其多了 3 个文件夹：</p>
+<ul>
+<li><code>current</code>：当前运行的文件夹。</li>
+<li><code>source</code>：真正的项目源代码。</li>
+<li><code>shared</code>：项目日志文件。</li>
+</ul>
+<h3 id="部署代码"><a href="#部署代码" class="headerlink" title="部署代码"></a>部署代码</h3><p>当一键传输配置完成，客户端项目代码可以一键传输到服务器上，这样我们便可以开始部署服务器上的项目了。<br>在开始部署之前，我们需要确保本地和 Github 私人仓库代码的同步，先将本地文件同步到 Github：</p>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># 和仓库代码同步</span></span><br><span class="line">git pull</span><br><span class="line"><span class="meta"># 代码添加到暂存区</span></span><br><span class="line">git add .</span><br><span class="line"><span class="meta"># 提交暂存区到仓库区</span></span><br><span class="line">git commit -m <span class="string">&quot;update ecosystem&quot;</span></span><br><span class="line"><span class="meta"># 传本地指定分支到远程仓库</span></span><br><span class="line">git push</span><br></pre></td></tr></table></figure>
+<p>这样提交完成后，在本地的根目录下执行命令，将代码向生产环境下部署：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pm2 deploy ecosystem<span class="selector-class">.config</span><span class="selector-class">.js</span> production</span><br></pre></td></tr></table></figure>
+<p>如果项目部署成功，配置文件中的 <code>post-deploy</code> 中的命令会自动执行(当然运行速度慢了可以将 npm 切换为 cnpm 或 yarn)，那么便可以看出 pm2 给出的提示：</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">PM2</span>][<span class="symbol">WARN</span>] <span class="symbol">Applications</span> api not running, starting...</span><br><span class="line">[<span class="symbol">PM2</span>][<span class="symbol">WARN</span>] <span class="symbol">Environment</span> [production] is not defined in process file</span><br><span class="line">[<span class="symbol">PM2</span>] <span class="symbol">App</span> [api] launched (<span class="number">1</span> instances)</span><br><span class="line">┌─────┬────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐</span><br><span class="line">│ id  │ name   │ namespace   │ version │ mode    │ pid      │ uptime │ ?    │ status    │ cpu      │ mem      │ user     │ watching │</span><br><span class="line">├─────┼────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤</span><br><span class="line">│ <span class="number">0</span>   │ api    │ default     │ <span class="number">1.0</span><span class="number">.0</span>   │ fork    │ <span class="number">9438</span>     │ <span class="number">0</span>s     │ <span class="number">0</span>    │ online    │ <span class="number">0</span><span class="comment">%       │ 9.1mb    │ bpc      │ disabled │</span></span><br><span class="line">└─────┴────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘</span><br><span class="line">  ○ successfully deployed origin/master</span><br><span class="line">--&gt; <span class="symbol">Success</span></span><br></pre></td></tr></table></figure>
+<p>这样便表示代码部署成功，我们可以在服务器上所有端口使用清空：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netstat -antp<span class="string">|grep</span></span><br></pre></td></tr></table></figure>
+<p>可以查看端口开发情况，例如本人的6060端口：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">tcp</span>    <span class="number">0</span>    <span class="number">0</span>    <span class="number">127.0.0.1:6060</span>    <span class="number">0.0.0.0</span>:*    LISTEN    <span class="number">2657</span>/node /var/www/</span><br></pre></td></tr></table></figure>
+<p><code>注意</code>：此时端口为<strong>127.0.0.1</strong>表明局域网可以访问，公网是不能访问到的，我们还需要 nginx 进行代理。</p>
+<h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>上面基本运行完成，但是只有局域网可以访问，我们需要将其使用 nginx 代理至公网上，至于 nginx 下载和配置便不多提了，我们可以新建一个配置文件，最终贴出我的配置：</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">  <span class="attribute">server_name</span> api.bipch.cn;</span><br><span class="line">  <span class="attribute">access_log</span>  /www/wwwlogs/api.bipch.cn.log;</span><br><span class="line">  <span class="attribute">error_log</span>  /www/wwwlogs/api.bipch.cn.<span class="literal">error</span>.log;</span><br><span class="line">  </span><br><span class="line">  <span class="attribute">location</span> / &#123;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Real-IP $remote_addr;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-Forwarded-For $proxy_add_x_forwarded_for;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> Host $http_host;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-NginX-Proxy <span class="literal">true</span>;</span><br><span class="line">    <span class="attribute">proxy_pass</span> http://127.0.0.1:6060;</span><br><span class="line">    <span class="attribute">proxy_redirect</span> <span class="literal">off</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其原理也很简单，其拦截了<strong>80</strong> 端口，并代理到本地的 <strong>6060</strong>，并配置了相应的域名，日志，端口等信息，配置完成后，使用 <code>./nginx -s reload</code> 重启服务。<br>最后如果配置正确，并且相应端口的安全组已经打开，那么我们便可以正常访问相应的 API 了。</p>
+<h3 id="配置-https"><a href="#配置-https" class="headerlink" title="配置 https"></a>配置 https</h3><p>Nginx 配置 Https 并免费通过阿里云申请证书， <a href="/nginx-https">前一篇文章</a> 中已经介绍了，这里就不多说了。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pm2/" rel="tag"># pm2</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/next/" rel="prev" title="Next.js">
+      <i class="fa fa-chevron-left"></i> Next.js
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/use-github-styles/" rel="next" title="Github主页美化">
+      Github主页美化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%B0%E7%94%A8%E6%88%B7-%E5%8F%AF%E9%80%89"><span class="nav-number">1.1.</span> <span class="nav-text">创建新用户(可选)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E8%AF%BB%E5%86%99%E6%9D%83%E9%99%90-%E5%8F%AF%E9%80%89"><span class="nav-number">1.2.</span> <span class="nav-text">文件读写权限(可选)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SSH-%E4%B8%8A%E4%BC%A0%E4%BB%A3%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">SSH 上传代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%AF%86%E9%92%A5"><span class="nav-number">2.1.</span> <span class="nav-text">设置密钥</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E4%BB%A3%E7%A0%81"><span class="nav-number">2.2.</span> <span class="nav-text">提交代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pm2-%E9%85%8D%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">pm2 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E4%BB%A3%E7%A0%81"><span class="nav-number">3.1.</span> <span class="nav-text">同步代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E4%BB%A3%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">部署代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Nginx"><span class="nav-number">4.</span> <span class="nav-text">Nginx</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-https"><span class="nav-number">4.1.</span> <span class="nav-text">配置 https</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

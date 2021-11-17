@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="自 2015 年推出 ES6 规则之后，每个一年几乎都会推出一些新增的特性，这些特性能为开发过程中提供许多的帮助，下面简单总结下自 Es6(2015) ~ Es12(2021) 推出的新特性，当然之后记录比较常用的，那些不常用的使用时再去查询也不迟。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Es6-Es12新特性">
+<meta property="og:url" content="https://bipch.cn/es6-es12/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="自 2015 年推出 ES6 规则之后，每个一年几乎都会推出一些新增的特性，这些特性能为开发过程中提供许多的帮助，下面简单总结下自 Es6(2015) ~ Es12(2021) 推出的新特性，当然之后记录比较常用的，那些不常用的使用时再去查询也不迟。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-10T10:44:41.000Z">
+<meta property="article:modified_time" content="2021-08-25T08:14:26.544Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ES6">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/es6-es12/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Es6-Es12新特性 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/es6-es12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Es6-Es12新特性
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-10 18:44:41" itemprop="dateCreated datePublished" datetime="2021-03-10T18:44:41+08:00">2021-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-25 16:14:26" itemprop="dateModified" datetime="2021-08-25T16:14:26+08:00">2021-08-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>自 2015 年推出 ES6 规则之后，每个一年几乎都会推出一些新增的特性，这些特性能为开发过程中提供许多的帮助，下面简单总结下自 Es6(2015) ~ Es12(2021) 推出的新特性，当然之后记录比较常用的，那些不常用的使用时再去查询也不迟。</p>
+<span id="more"></span>
+
+<h2 id="Es6"><a href="#Es6" class="headerlink" title="Es6"></a>Es6</h2><h3 id="1-类-class"><a href="#1-类-class" class="headerlink" title="1. 类(class)"></a>1. 类(class)</h3><p>这里一定要注意，JS 并没有 Class 的概念，就算是 Es6 新增的其本质任然是 Function + 原型链。<br>使用方式如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span></span>&#123;</span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params"> name </span>)</span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.name = name;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">toString</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;My name&#x27;</span> + <span class="built_in">this</span>.name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person = <span class="keyword">new</span> Person(<span class="string">&#x27;橙子&#x27;</span>);</span><br><span class="line">person.toString();</span><br></pre></td></tr></table></figure>
+<h3 id="2-let-和-const"><a href="#2-let-和-const" class="headerlink" title="2. let 和 const"></a>2. let 和 const</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> name = <span class="string">&#x27;橙子&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> list = [];</span><br></pre></td></tr></table></figure>
+<h3 id="3-Arrow"><a href="#3-Arrow" class="headerlink" title="3. Arrow"></a>3. Arrow</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sum = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line">sum(<span class="number">1</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="4-Module"><a href="#4-Module" class="headerlink" title="4. Module"></a>4. Module</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> sum = <span class="function">(<span class="params">a, b</span>) =&gt;</span> a + b;</span><br><span class="line"><span class="comment">// 导入</span></span><br><span class="line"><span class="keyword">import</span> &#123; sum &#125; <span class="keyword">from</span> <span class="string">&#x27;...&#x27;</span>;</span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line"><span class="built_in">console</span>.log(sub(<span class="number">1</span>, <span class="number">2</span>));</span><br></pre></td></tr></table></figure>
+<h3 id="5-模板字符串"><a href="#5-模板字符串" class="headerlink" title="5. 模板字符串"></a>5. 模板字符串</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> name = <span class="string">&#x27;橙子&#x27;</span>;</span><br><span class="line"><span class="keyword">const</span> str = <span class="string">`Your name is <span class="subst">$&#123;name&#125;</span>`</span>;</span><br></pre></td></tr></table></figure>
+<h3 id="6-解构赋值"><a href="#6-解构赋值" class="headerlink" title="6. 解构赋值"></a>6. 解构赋值</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> [a, b] = [<span class="number">6</span>, <span class="number">9</span>];</span><br></pre></td></tr></table></figure>
+<h3 id="7-参数默认值"><a href="#7-参数默认值" class="headerlink" title="7. 参数默认值"></a>7. 参数默认值</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> sum = <span class="function">(<span class="params">a = <span class="number">1</span>, b = <span class="number">2</span></span>) =&gt;</span> a + b;</span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line">sum();</span><br></pre></td></tr></table></figure>
+<h3 id="8-展开"><a href="#8-展开" class="headerlink" title="8. 展开"></a>8. 展开</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// [1, 2, 3]</span></span><br><span class="line"><span class="built_in">console</span>.log([<span class="number">1</span>, ...[<span class="number">2</span>, <span class="number">3</span>]]);</span><br></pre></td></tr></table></figure>
+<h3 id="9-数据简写"><a href="#9-数据简写" class="headerlink" title="9. 数据简写"></a>9. 数据简写</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> name=<span class="string">&#x27;橙子&#x27;</span>,</span><br><span class="line"><span class="keyword">const</span> obj = &#123; name &#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="10-Promise"><a href="#10-Promise" class="headerlink" title="10. Promise"></a>10. Promise</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">    resolve(<span class="string">&#x27;橙子&#x27;</span>);</span><br><span class="line">  &#125;, <span class="number">0</span>);</span><br><span class="line">&#125;).then(<span class="function"><span class="params">result</span> =&gt;</span> &#123; <span class="built_in">console</span>.log(result); &#125;);</span><br></pre></td></tr></table></figure>
+<p>结果为 0、橙子，如果没有看出可以了解下微观和宏观任务。</p>
+<h3 id="11-symbol"><a href="#11-symbol" class="headerlink" title="11. symbol"></a>11. symbol</h3><p>Es6 新增的基本数据类型，它和 <strong>let</strong> 和 <strong>const</strong> 不同，其为一种基本数据类型，也是除了 String、Number、Boolean、undefined、Null、还新增了 Symbol  用于表示独一无二的。<br>例如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> sy = <span class="built_in">Symbol</span>(<span class="string">&quot;KK&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Symbol(KK)</span></span><br><span class="line"><span class="built_in">console</span>.log(sy);</span><br><span class="line"><span class="comment">// &quot;symbol&quot;</span></span><br><span class="line"><span class="keyword">typeof</span>(sy);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 即使定义一样，也不可能相等</span></span><br><span class="line"><span class="keyword">let</span> sy1 = <span class="built_in">Symbol</span>(<span class="string">&quot;kk&quot;</span>); </span><br><span class="line"><span class="comment">// false</span></span><br><span class="line">sy === sy1;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Es7"><a href="#Es7" class="headerlink" title="Es7"></a>Es7</h2><h3 id="1-Array-prototype-includes"><a href="#1-Array-prototype-includes" class="headerlink" title="1. Array.prototype.includes()"></a>1. Array.prototype.includes()</h3><p>判断字符串是否包含指定的子字符串：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> str = <span class="string">&quot;I like oranges&quot;</span>;</span><br><span class="line"><span class="comment">// true</span></span><br><span class="line"><span class="keyword">var</span> n = str.includes(<span class="string">&quot;oranges&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="2-指数运算"><a href="#2-指数运算" class="headerlink" title="2. 指数运算"></a>2. 指数运算</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 8</span></span><br><span class="line"><span class="number">2</span>**<span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Es8"><a href="#Es8" class="headerlink" title="Es8"></a>Es8</h2><h3 id="1-async-await"><a href="#1-async-await" class="headerlink" title="1. async/await"></a>1. async/await</h3><p>异步化编程的解决方案，最终返回的为 Promise 对象。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="title">queryPage</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  <span class="comment">// await 异步任务</span></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> queryPage();</span><br><span class="line">  <span class="comment">//<span class="doctag">TODO:</span> 逻辑处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-Object-values"><a href="#2-Object-values" class="headerlink" title="2. Object.values()"></a>2. Object.values()</h3><p>返回给定对象自身的所有可枚举属性值的数组：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123; <span class="attr">love</span>: <span class="string">&#x27;orange&#x27;</span>, <span class="attr">user</span>: <span class="string">&#x27;I&#x27;</span> &#125;;</span><br><span class="line"><span class="comment">// [&#x27;orange&#x27;, &#x27;I&#x27;]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.values(obj));</span><br></pre></td></tr></table></figure>
+<h3 id="3-Object-entries"><a href="#3-Object-entries" class="headerlink" title="3. Object.entries()"></a>3. Object.entries()</h3><p>返回一个给定对象自身可枚举属性的键值对数组：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> obj = &#123; <span class="attr">love</span>: <span class="string">&#x27;orange&#x27;</span>, <span class="attr">user</span>: <span class="string">&#x27;I&#x27;</span> &#125;;</span><br><span class="line"><span class="comment">// [ [&quot;love&quot;, &quot;orange&quot;], [&quot;user&quot;, &quot;I&quot;] ]</span></span><br><span class="line"><span class="built_in">console</span>.log(<span class="built_in">Object</span>.entries(obj));</span><br></pre></td></tr></table></figure>
+<h3 id="4-String-padding"><a href="#4-String-padding" class="headerlink" title="4. String padding"></a>4. String padding</h3><p>在指定位置使用空格填充字符串：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// padStart</span></span><br><span class="line"><span class="string">&#x27;orange&#x27;</span>.padStart(<span class="number">10</span>); <span class="comment">// &quot;    orange&quot;</span></span><br><span class="line"><span class="comment">// padEnd</span></span><br><span class="line"><span class="string">&#x27;hello&#x27;</span>.padEnd(<span class="number">10</span>) <span class="string">&quot;orange    &quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Es9"><a href="#Es9" class="headerlink" title="Es9"></a>Es9</h2><h3 id="1-异步并发"><a href="#1-异步并发" class="headerlink" title="1. 异步并发"></a>1. 异步并发</h3><p>运行 await 和 for…of 联合使用，并发执行异步操作，说实话这功能是真的鸡肋：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">process</span>(<span class="params">array</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> <span class="keyword">await</span> (<span class="keyword">let</span> i <span class="keyword">of</span> array) &#123;</span><br><span class="line">    <span class="comment">//<span class="doctag">TODO:</span> 逻辑处理</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-Promise-finally"><a href="#2-Promise-finally" class="headerlink" title="2. Promise.finally()"></a>2. Promise.finally()</h3><p>无论 Promise 成功与否都会去执行：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Promise</span>.resolve().then().catch(<span class="function"><span class="params">e</span> =&gt;</span> e).finally();</span><br></pre></td></tr></table></figure>
+
+<h2 id="Es10"><a href="#Es10" class="headerlink" title="Es10"></a>Es10</h2><h3 id="1-Array-prototype-flat-和-Array-prototype-flatMap"><a href="#1-Array-prototype-flat-和-Array-prototype-flatMap" class="headerlink" title="1. Array.prototype.flat() 和 Array.prototype.flatMap()"></a>1. Array.prototype.flat() 和 Array.prototype.flatMap()</h3><p>作用都一样都是用于将数组展开，但不同的是两个实现方式。<code>flatMap()</code>方法首先使用映射函数映射每个元素，然后将结果压缩成一个新数组，而<code>flat()</code>方法创建一个新数组，其中所有子数组元素都以递归方式连接到该数组中，直到达到指定的深度为止。所以从实现方式来看<code>flatMap()</code>的效率更快。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> arr1 = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, [<span class="number">3</span>, <span class="number">4</span>]];</span><br><span class="line"></span><br><span class="line"><span class="comment">// [0, 1, 2, 3, 4]</span></span><br><span class="line"><span class="built_in">console</span>.log(arr1.flat());</span><br><span class="line"><span class="comment">// [0, 1, 2, 3, 4]</span></span><br><span class="line"><span class="built_in">console</span>.log(arr1.flatMap(<span class="function"><span class="params">x</span> =&gt;</span> x));</span><br></pre></td></tr></table></figure>
+<h3 id="2-String-trimStart-和-String-trimEnd"><a href="#2-String-trimStart-和-String-trimEnd" class="headerlink" title="2. String.trimStart() 和 String.trimEnd()"></a>2. String.trimStart() 和 String.trimEnd()</h3><p>去除字符串首位空格，用处也不会有太大，个别情况下才会进行使用。</p>
+<h2 id="ES11"><a href="#ES11" class="headerlink" title="ES11"></a>ES11</h2><h3 id="1-globalThis"><a href="#1-globalThis" class="headerlink" title="1. globalThis"></a>1. globalThis</h3><p>获取全局的 this 对象：</p>
+<ul>
+<li>浏览器：window</li>
+<li>worker：self</li>
+<li>node：global</li>
+</ul>
+<p>可能由于是近期推出的，至今都没有使用过。</p>
+<h2 id="ES12"><a href="#ES12" class="headerlink" title="ES12"></a>ES12</h2><h3 id="1-replaceAll"><a href="#1-replaceAll" class="headerlink" title="1. replaceAll"></a>1. replaceAll</h3><p>将字符串中的指定字符替换，返回新的字符串：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> str = <span class="string">&#x27;orange&#x27;</span>;</span><br><span class="line"><span class="comment">// range</span></span><br><span class="line">str.replaceAll(<span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h3 id="2-数字分隔符"><a href="#2-数字分隔符" class="headerlink" title="2. 数字分隔符"></a>2. 数字分隔符</h3><p>数字之间的间隔字符串，通过 _ 分割数字，可以添加数字的可读性：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> money = <span class="number">1_000_000_000</span>;</span><br><span class="line"><span class="comment">// 作用是一样的</span></span><br><span class="line"><span class="keyword">const</span> money = <span class="number">1000000000</span>;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ES6/" rel="tag"># ES6</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/use-github-styles/" rel="prev" title="Github主页美化">
+      <i class="fa fa-chevron-left"></i> Github主页美化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/prototype-chain/" rel="next" title="JavaScript原型链">
+      JavaScript原型链 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Es6"><span class="nav-number">1.</span> <span class="nav-text">Es6</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%B1%BB-class"><span class="nav-number">1.1.</span> <span class="nav-text">1. 类(class)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-let-%E5%92%8C-const"><span class="nav-number">1.2.</span> <span class="nav-text">2. let 和 const</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Arrow"><span class="nav-number">1.3.</span> <span class="nav-text">3. Arrow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Module"><span class="nav-number">1.4.</span> <span class="nav-text">4. Module</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%A8%A1%E6%9D%BF%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.5.</span> <span class="nav-text">5. 模板字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E8%A7%A3%E6%9E%84%E8%B5%8B%E5%80%BC"><span class="nav-number">1.6.</span> <span class="nav-text">6. 解构赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E5%8F%82%E6%95%B0%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">1.7.</span> <span class="nav-text">7. 参数默认值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-%E5%B1%95%E5%BC%80"><span class="nav-number">1.8.</span> <span class="nav-text">8. 展开</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-%E6%95%B0%E6%8D%AE%E7%AE%80%E5%86%99"><span class="nav-number">1.9.</span> <span class="nav-text">9. 数据简写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Promise"><span class="nav-number">1.10.</span> <span class="nav-text">10. Promise</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11-symbol"><span class="nav-number">1.11.</span> <span class="nav-text">11. symbol</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Es7"><span class="nav-number">2.</span> <span class="nav-text">Es7</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Array-prototype-includes"><span class="nav-number">2.1.</span> <span class="nav-text">1. Array.prototype.includes()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%8C%87%E6%95%B0%E8%BF%90%E7%AE%97"><span class="nav-number">2.2.</span> <span class="nav-text">2. 指数运算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Es8"><span class="nav-number">3.</span> <span class="nav-text">Es8</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-async-await"><span class="nav-number">3.1.</span> <span class="nav-text">1. async&#x2F;await</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Object-values"><span class="nav-number">3.2.</span> <span class="nav-text">2. Object.values()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Object-entries"><span class="nav-number">3.3.</span> <span class="nav-text">3. Object.entries()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-String-padding"><span class="nav-number">3.4.</span> <span class="nav-text">4. String padding</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Es9"><span class="nav-number">4.</span> <span class="nav-text">Es9</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%BC%82%E6%AD%A5%E5%B9%B6%E5%8F%91"><span class="nav-number">4.1.</span> <span class="nav-text">1. 异步并发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Promise-finally"><span class="nav-number">4.2.</span> <span class="nav-text">2. Promise.finally()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Es10"><span class="nav-number">5.</span> <span class="nav-text">Es10</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Array-prototype-flat-%E5%92%8C-Array-prototype-flatMap"><span class="nav-number">5.1.</span> <span class="nav-text">1. Array.prototype.flat() 和 Array.prototype.flatMap()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-String-trimStart-%E5%92%8C-String-trimEnd"><span class="nav-number">5.2.</span> <span class="nav-text">2. String.trimStart() 和 String.trimEnd()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES11"><span class="nav-number">6.</span> <span class="nav-text">ES11</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-globalThis"><span class="nav-number">6.1.</span> <span class="nav-text">1. globalThis</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ES12"><span class="nav-number">7.</span> <span class="nav-text">ES12</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-replaceAll"><span class="nav-number">7.1.</span> <span class="nav-text">1. replaceAll</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%B0%E5%AD%97%E5%88%86%E9%9A%94%E7%AC%A6"><span class="nav-number">7.2.</span> <span class="nav-text">2. 数字分隔符</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

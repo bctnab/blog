@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一个简单、可扩展的状态管理工具，整体是一个使用 观察者模式，这会使得代码变得更加简介、更容易理解。并且可以和 React 强力结合，由 React 通过提供机制把应用状态转换为可渲染组件树并对其进行渲染。而MobX提供机制来存储和更新应用状态供 React 使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MobX">
+<meta property="og:url" content="https://bipch.cn/react-mobx/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="一个简单、可扩展的状态管理工具，整体是一个使用 观察者模式，这会使得代码变得更加简介、更容易理解。并且可以和 React 强力结合，由 React 通过提供机制把应用状态转换为可渲染组件树并对其进行渲染。而MobX提供机制来存储和更新应用状态供 React 使用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-08-07T00:46:50.000Z">
+<meta property="article:modified_time" content="2021-08-20T11:17:33.315Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="组件通信">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/react-mobx/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MobX | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/react-mobx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MobX
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-08-07 08:46:50" itemprop="dateCreated datePublished" datetime="2020-08-07T08:46:50+08:00">2020-08-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-20 19:17:33" itemprop="dateModified" datetime="2021-08-20T19:17:33+08:00">2021-08-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/" itemprop="url" rel="index"><span itemprop="name">React</span></a>
+                </span>
+                  ，
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/React/Mobx/" itemprop="url" rel="index"><span itemprop="name">Mobx</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一个简单、可扩展的状态管理工具，整体是一个使用 <strong>观察者模式</strong>，这会使得代码变得更加简介、更容易理解。并且可以和 React 强力结合，由 React 通过提供机制把应用状态转换为可渲染组件树并对其进行渲染。而MobX提供机制来存储和更新应用状态供 React 使用。</p>
+<span id="more"></span>
+
+<h2 id="为什么使用-Mobx？"><a href="#为什么使用-Mobx？" class="headerlink" title="为什么使用 Mobx？"></a>为什么使用 Mobx？</h2><p>从 React 诞生其组件之间的数据共享和逻辑复用，一直是难以解决的问题，直能后面基于 Flux 之上提出 Redux，帮助 React 进行数据的管理。 但是由于 Redux 存在着单一数据源、大量代码冗余、和一些入门的门槛…等问题，这使得前端需要另外一款更容易上手的状态管理框架，这样 Mobx 便出现了，其特点就是代码简洁、容易上手。但是由于其代码过于简洁，导致项目拓展性过差，其第三方库的数量也远不如 Redux 的第三方库(截止本文书写为止，npm 上 mobx 相关插件有 1422个，而 Redux 有 14482个)。所以具体使用那些库可以根据自己需求选择。</p>
+<h2 id="observable"><a href="#observable" class="headerlink" title="observable"></a>observable</h2><p>使用 observable 可以将数据定义为可观察的，被观察的数据类型可以有很多种比如基本数据类型、引用类型、普通对象、类实例、数组和映射等：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> map = observable.map(&#123; <span class="attr">key</span>: <span class="string">&quot;value&quot;</span>&#125;);</span><br><span class="line">map.set(<span class="string">&quot;key&quot;</span>, <span class="string">&quot;new value&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> list = observable([<span class="number">1</span>, <span class="number">2</span>, <span class="number">4</span>]);</span><br><span class="line">list[<span class="number">2</span>] = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person = observable(&#123;</span><br><span class="line">  <span class="attr">firstName</span>: <span class="string">&quot;Clive Staples&quot;</span>,</span><br><span class="line">  <span class="attr">lastName</span>: <span class="string">&quot;Lewis&quot;</span></span><br><span class="line">&#125;);</span><br><span class="line">person.firstName = <span class="string">&quot;C.S.&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> temperature = observable.box(<span class="number">20</span>);</span><br><span class="line">temperature.set(<span class="number">25</span>);</span><br></pre></td></tr></table></figure>
+<p>可以看出使用 <code>observable</code> 不同的方法，可以对不同的数据进行封装。</p>
+<h3 id="computed"><a href="#computed" class="headerlink" title="computed"></a>computed</h3><p>表示 observable 的衍生值，在某些时候我们不需要 <code>observable</code> 而是需要对其进行逻辑封装之后的值：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; observable, computed, autorun &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> number = observable.box(-<span class="number">10</span>);</span><br><span class="line"><span class="keyword">const</span> plus = computed(<span class="function">() =&gt;</span> number.get() &gt; <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">number.set(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>这样使用 computed 进行了计算，一旦函数依赖的数据发生改变 computed 就是重新计算，这个值便可以称之为数据的衍生值。</p>
+<h3 id="autorun"><a href="#autorun" class="headerlink" title="autorun"></a>autorun</h3><p>监听 observable 的变化，当监听数据变更后就会执行函数内的逻辑，比如我们可以用其打印数据日志：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; observable, computed, autorun &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> number = observable.box(-<span class="number">10</span>);</span><br><span class="line"><span class="keyword">const</span> plus = computed(<span class="function">() =&gt;</span> number.get() &gt; <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">autorun(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="built_in">console</span>.log(plus.get());</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">number.set(<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+<p>这样一旦 <code>autorun</code> 中的依赖项一旦变更，里面的函数就会重新计算。</p>
+<h3 id="reaction"><a href="#reaction" class="headerlink" title="reaction"></a>reaction</h3><p><code>autorun</code> 的变种，但是其拥有追踪 observable 更细粒度的控制。reaction 接收两个函数参数，第一个是用来追踪并返回数据作为第二个函数的输入：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; observable, reaction, autorun &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> todos = observable([&#123;</span><br><span class="line">  <span class="attr">title</span>: <span class="string">&quot;Make coffee&quot;</span>,</span><br><span class="line">  <span class="attr">done</span>: <span class="literal">true</span>,</span><br><span class="line">&#125;, &#123;</span><br><span class="line">  <span class="attr">title</span>: <span class="string">&quot;Find biscuit&quot;</span>,</span><br><span class="line">  <span class="attr">done</span>: <span class="literal">false</span></span><br><span class="line">&#125;]);</span><br><span class="line"></span><br><span class="line"><span class="comment">// reaction</span></span><br><span class="line"><span class="keyword">const</span> reactions = reaction(</span><br><span class="line">  <span class="function">() =&gt;</span> todos.map(<span class="function"><span class="params">todo</span> =&gt;</span> todo.title),</span><br><span class="line">  <span class="function"><span class="params">titles</span> =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&quot;reaction:&quot;</span>, titles.join(<span class="string">&quot;, &quot;</span>))</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="comment">// autorun</span></span><br><span class="line"><span class="keyword">const</span> autoruns = autorun(</span><br><span class="line">  <span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&quot;autorun:&quot;</span>, todos.map(<span class="function"><span class="params">todo</span> =&gt;</span> todo.title).join(<span class="string">&quot;, &quot;</span>))</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">todos.push(&#123; <span class="attr">title</span>: <span class="string">&quot;explain reactions&quot;</span>, <span class="attr">done</span>: <span class="literal">false</span> &#125;);</span><br><span class="line"><span class="comment">// reaction: Make coffee, Find biscuit, explain reactions</span></span><br><span class="line"><span class="comment">// autorun: Make coffee, Find biscuit, explain reactions</span></span><br><span class="line"></span><br><span class="line">todos[<span class="number">0</span>].title = <span class="string">&quot;Make tea&quot;</span></span><br><span class="line"><span class="comment">// reaction: Make tea, Find biscuit, explain reactions</span></span><br><span class="line"><span class="comment">// autorun: Make tea, Find biscuit, explain reactions</span></span><br></pre></td></tr></table></figure>
+<p>其用法和 <code>autorun</code> 极为相似，我们可以理解其是 <code>autorun(() =&gt; action(sideEffect)(expression))</code> 的一种语法糖，</p>
+<h2 id="action"><a href="#action" class="headerlink" title="action"></a>action</h2><p>用于表示程序需要执行的动作，使用 action 可以使你的程序更加的健壮。但是只有修改状态时才需要使用 action，如果知识状态获取、过滤则不应该使用。<br>我们可以强制所有状态变更都必须通过 action 来完成。在大型、长期的项目中，这是十分有用的最佳实践。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; observable, configure, action &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 不允许 action 之外进行状态修改</span></span><br><span class="line">configure(&#123; <span class="attr">enforceActions</span>: <span class="string">&#x27;always&#x27;</span> &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> number = observable.box(-<span class="number">10</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误，只能使用 action 更新</span></span><br><span class="line">number.set(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// action 更新，正常</span></span><br><span class="line">action(<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">  number.set(<span class="number">1</span>)</span><br><span class="line">  <span class="built_in">console</span>.log(number.value)</span><br><span class="line">&#125;)()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="结合-React"><a href="#结合-React" class="headerlink" title="结合 React"></a>结合 React</h2><p>Mobx 为了框架的上手率，其实并没有提出太多的 API，我们只需了解一些上面的 API，就可以上手使用。</p>
+<p>比如我们通过下面代码用其和 React 进行结合使用：<br>首先我们需要先使用 <code>observable</code> 定于可观察数据、使用 <code>action</code> 定义动作修改数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; decorate, action, observable, configure &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx&#x27;</span>;</span><br><span class="line"></span><br><span class="line">configure(&#123; <span class="attr">enforceActions</span>: <span class="string">&#x27;always&#x27;</span> &#125;);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">UserStore</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  name;</span><br><span class="line"></span><br><span class="line">  setName = <span class="function">(<span class="params">name</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>.name = name;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将数据定义为 observable(可观察)、action(动作)</span></span><br><span class="line">decorate(UserStore, &#123;</span><br><span class="line">  <span class="attr">name</span>: observable,</span><br><span class="line">  <span class="attr">setName</span>: action</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> store = <span class="keyword">new</span> UserStore();</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> store;</span><br></pre></td></tr></table></figure>
+<p>这样便通过 ES6 中的 class 进行了数据封装，由于本人不喜欢装饰器的写法，就使用了 <code>decorate</code> 进行数据的定义。<br>数据定义后，我们可以在父组件中将数据注入，方便子组件获取数据：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> ReactDOM <span class="keyword">from</span> <span class="string">&#x27;react-dom&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./components/app&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> UserStore <span class="keyword">from</span> <span class="string">&#x27;./text/store.text&#x27;</span>;</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">React.StrictMode</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">App</span> <span class="attr">UserStore</span>=<span class="string">&#123;</span> <span class="attr">UserStore</span> &#125; /&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">React.StrictMode</span>&gt;</span></span>,</span><br><span class="line">  <span class="built_in">document</span>.getElementById(<span class="string">&#x27;root&#x27;</span>)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>父组件设置共享数据后，子组件通过 <code>observer</code> 将指定组件连接到 Mobx 上：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, &#123; Component &#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123; observer, inject &#125; <span class="keyword">from</span> <span class="string">&#x27;mobx-react&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; UserStore &#125; = <span class="built_in">this</span>.props;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">      <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">onClick</span>=<span class="string">&#123;</span> () =&gt;</span> UserStore.setName(&#x27;hades&#x27;) &#125;&gt;user name: &#123;UserStore.name&#125;<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> inject(<span class="string">&#x27;UserStore&#x27;</span>)(observer(App));</span><br></pre></td></tr></table></figure>
+<p>通过 <code>inject</code> 辅助 <code>observer</code> 将指定组件连接到 Mobx 指定数据源上，这样 React 组件间便可以使用 Mobx 共享的数据了。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%84%E4%BB%B6%E9%80%9A%E4%BF%A1/" rel="tag"># 组件通信</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/react-hooks/" rel="prev" title="react-hooks">
+      <i class="fa fa-chevron-left"></i> react-hooks
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/dva/" rel="next" title="Dva">
+      Dva <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8-Mobx%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">为什么使用 Mobx？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#observable"><span class="nav-number">2.</span> <span class="nav-text">observable</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#computed"><span class="nav-number">2.1.</span> <span class="nav-text">computed</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#autorun"><span class="nav-number">2.2.</span> <span class="nav-text">autorun</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#reaction"><span class="nav-number">2.3.</span> <span class="nav-text">reaction</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#action"><span class="nav-number">3.</span> <span class="nav-text">action</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E5%90%88-React"><span class="nav-number">4.</span> <span class="nav-text">结合 React</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lobster:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"bipch.cn","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":true,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一种非关系型的数据库，由于其高性能、易部署、易使用，并且可以通过 Mongoose 和 Node.js 完美结合起来使用，可以很方便的为 web 应用提供一种高效的存储方案，详情可以去官网查看。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MongoDB安装">
+<meta property="og:url" content="https://bipch.cn/linux-software/index.html">
+<meta property="og:site_name" content="CLBHDS">
+<meta property="og:description" content="一种非关系型的数据库，由于其高性能、易部署、易使用，并且可以通过 Mongoose 和 Node.js 完美结合起来使用，可以很方便的为 web 应用提供一种高效的存储方案，详情可以去官网查看。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-20T06:20:30.000Z">
+<meta property="article:modified_time" content="2021-11-10T03:22:33.668Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="MongoDB">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://bipch.cn/linux-software/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>MongoDB安装 | CLBHDS</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container">
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">CLBHDS</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://bipch.cn/linux-software/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CLBHDS">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MongoDB安装
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-20 14:20:30" itemprop="dateCreated datePublished" datetime="2020-10-20T14:20:30+08:00">2020-10-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-10 11:22:33" itemprop="dateModified" datetime="2021-11-10T11:22:33+08:00">2021-11-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E6%8D%AE%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">数据库</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一种非关系型的数据库，由于其高性能、易部署、易使用，并且可以通过 Mongoose 和 Node.js 完美结合起来使用，可以很方便的为 web 应用提供一种高效的存储方案，详情可以去<a target="_blank" rel="noopener" href="https://www.mongodb.com/">官网</a>查看。</p>
+<span id="more"></span>
+
+<h2 id="官网安装"><a href="#官网安装" class="headerlink" title="官网安装"></a>官网安装</h2><p>进入 <a target="_blank" rel="noopener" href="https://www.mongodb.com/try/download/community">MongoDB官网</a> 根据自己系统，复制相应的下载链接。然后在 linux 通过 <code>wget</code> 命令安装，之后通过 <code>tar</code> 命令进行解压，通过 <code>mv</code> 命令进行重命名，然后通过 <code>rm</code> 将压缩包删除，因为解压之后，压缩包已经失去了价值。<br>这样基本项目已经下载完成，我们还需要手动创建日志文件目录、数据库文件目录：</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mkdir</span> <span class="keyword">db</span> logs</span><br></pre></td></tr></table></figure>
+<p>两个文件夹 <code>db</code>、<code>logs</code> 分别存放数据库和日志，这样配置基本完成，我们也可以添加一个配置文件 <code>mongodb.conf</code> 文件，我们这里通过 yaml 方式进行配置，具体配置可以看其<a target="_blank" rel="noopener" href="https://docs.mongodb.com/manual/reference/configuration-options/#configuration-file">官方文档</a>：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">systemLog:</span></span><br><span class="line"><span class="symbol">  destination:</span> file</span><br><span class="line"><span class="symbol">  path:</span> <span class="meta-keyword">/usr/</span>local<span class="meta-keyword">/mongodb-linux/</span>logs/mongodb.log</span><br><span class="line"><span class="symbol">  logAppend:</span> true</span><br><span class="line"><span class="symbol">storage:</span></span><br><span class="line"><span class="symbol">  dbPath:</span> <span class="meta-keyword">/usr/</span>local<span class="meta-keyword">/mongodb-linux/</span>db</span><br><span class="line"><span class="symbol">  journal:</span></span><br><span class="line"><span class="symbol">    enabled:</span> true</span><br><span class="line"><span class="symbol">net:</span></span><br><span class="line"><span class="symbol">  bindIp:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"><span class="symbol">  port:</span> <span class="number">27017</span></span><br><span class="line"><span class="symbol">setParameter:</span></span><br><span class="line"><span class="symbol">  enableLocalhostAuthBypass:</span> false</span><br><span class="line"><span class="symbol">security:</span></span><br><span class="line"><span class="symbol">  authorization:</span> enabled</span><br></pre></td></tr></table></figure>
+<p>都是一些简单的配置，可以根据自己需求修改。</p>
+<h2 id="docker-compose-安装"><a href="#docker-compose-安装" class="headerlink" title="docker-compose 安装"></a>docker-compose 安装</h2><p>使用 docker 我们可以很简单的在任何地方部署我们的项目，我们只需编写 <code>docker-compose.yml</code> 文件，然后通过一行命令就可以完成安装：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">version:</span> <span class="string">&quot;3&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">mongo:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo:5.0.3</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mongo</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">27017</span><span class="string">:27017</span></span><br><span class="line">    <span class="attr">volumes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongo/db:/data/db</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongo/log:/data/log</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">./mongo/mongod.conf:/data/configdb/mongod.conf</span></span><br><span class="line">    <span class="attr">command:</span> <span class="string">--config</span> <span class="string">/data/configdb/mongod.conf</span></span><br><span class="line">  <span class="attr">mongo-express:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">mongo-express</span></span><br><span class="line">    <span class="attr">restart:</span> <span class="string">always</span></span><br><span class="line">    <span class="attr">container_name:</span> <span class="string">mongo-express</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="attr">ME_CONFIG_MONGODB_URL:</span> <span class="string">mongodb://mongo:27017</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="number">8081</span><span class="string">:8081</span></span><br><span class="line">    <span class="attr">depends_on:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">mongo</span></span><br></pre></td></tr></table></figure>
+<p>这样只需一行命令 <code>docker-compose up -d</code> 就能安装 mongo，并且将其可视化工具 <code>mongo-express</code> 一并安装。<br>安装完成后可使用 <code>docker ps -a</code> 查看所有运行的容器：</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ docker ps -<span class="keyword">a</span></span><br><span class="line">CONTAINER ID   IMAGE                 COMMAND                  CREATED        STATUS                PORTS                            NAMES</span><br><span class="line"><span class="number">21</span>f7c7b72161   mongo:<span class="number">5.0</span><span class="number">.3</span>     <span class="string">&quot;docker-entrypoint…&quot;</span>           Up <span class="number">3</span> <span class="built_in">seconds</span>   Up <span class="number">3</span> <span class="built_in">seconds</span>          <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">27017</span>-&gt;<span class="number">27017</span>/tcp         mongo</span><br><span class="line"><span class="number">9</span>edae74f39d9   mongo-express   <span class="string">&quot;tini -- /docker-ent…&quot;</span>         Up <span class="number">3</span> <span class="built_in">seconds</span>   Up <span class="number">3</span> <span class="built_in">seconds</span>          <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">8081</span>-&gt;<span class="number">8081</span>/tcp           mongo-express</span><br></pre></td></tr></table></figure>
+<p>我们可以通过 docker 命令进入 mongo 容器:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">docker</span> exec -it <span class="number">21</span>f<span class="number">7</span>c<span class="number">7</span>b<span class="number">72161</span> /bin/bash</span><br></pre></td></tr></table></figure>
+<p>就可以进入 mongo 控制台，执行一些常用的命令。</p>
+<h2 id="数据安全"><a href="#数据安全" class="headerlink" title="数据安全"></a>数据安全</h2><p>虽然上面代码已经可以访问数据库，但是这种方式缺乏安全性。这时我们为了数据安全便需要开启用户验证，首先我们需要新增一个用户：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ mongo</span><br><span class="line">&gt; use admin</span><br><span class="line">&gt; db.createUser(&#123; <span class="attr">user</span>: <span class="string">&quot;username&quot;</span>, <span class="attr">pwd</span>: <span class="string">&quot;pwd&quot;</span>, <span class="attr">roles</span>: [&#123;<span class="attr">role</span>:<span class="string">&quot;root&quot;</span>, <span class="attr">db</span>:<span class="string">&quot;admin&quot;</span>&#125;]&#125;)</span><br></pre></td></tr></table></figure>
+<p>为了数据安全性，我们一般为每个数据库都添加一个管理用户，而尽量避免使用 admin 管理所有的数据库。</p>
+<p>我们可以使用：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db<span class="selector-class">.system</span><span class="selector-class">.users</span><span class="selector-class">.find</span>()</span><br></pre></td></tr></table></figure>
+<p>查看所有添加的用户。<br>使用：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">db<span class="selector-class">.system</span><span class="selector-class">.users</span><span class="selector-class">.remove</span>(&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>命令删除掉指定的用户。</p>
+
+    </div>
+
+    
+    
+    
+        <div class="reward-container">
+  <div></div>
+  <button onclick="var qr = document.getElementById('qr'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+  </div>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MongoDB/" rel="tag"># MongoDB</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/antiShake-throttle/" rel="prev" title="防抖节流">
+      <i class="fa fa-chevron-left"></i> 防抖节流
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/copy/" rel="next" title="拷贝">
+      拷贝 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%98%E7%BD%91%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">官网安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#docker-compose-%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">docker-compose 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AE%89%E5%85%A8"><span class="nav-number">3.</span> <span class="nav-text">数据安全</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="John Doe"
+      src="https://img.bplink66.com/2021/11/05/1nl4j8lfym7.jpg">
+  <p class="site-author-name" itemprop="name">John Doe</p>
+  <div class="site-description" itemprop="description">正因为有忘也忘不了的回忆，才会变得坚强，这就是所谓的成长吧！</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">49</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+
+<p>
+  <i class="fa fa-copyright">&nbsp;2019 - 2021</i>
+  <span style="font-weight:700">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+  <i class="fa fa-heart">&nbsp;&nbsp;John Doe</i>
+</p>
+  <p>博客已萌萌哒运行<span id="since"></span><i class="fa fa-heart with-love"></i></p>
+
+<p>
+  &copy; <span itemprop="copyrightYear">2021</span>
+  hi, <span class="author" itemprop="copyrightHolder">John Doe</span>.
+  由 <a href="https://hexo.io/" target="_blank" class="external" rel="nofollow">Hexo</a> 强力驱动.Theme By <a href="https://github.com/theme-next/hexo-theme-next" target="_blank" class="external" rel="nofollow">Next</a>. 站点地图.
+</p>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script size="90" alpha="0.6" zIndex="-1" src="//cdn.jsdelivr.net/gh/theme-next/theme-next-canvas-ribbon@1/canvas-ribbon.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1/dist/lozad.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+<script src="/js/custom.js"></script>
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
